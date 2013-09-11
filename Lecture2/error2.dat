@@ -1,0 +1,22 @@
+; Data as used in Davis et al. 2007 (astro-ph/0701510).
+;
+; This is the combined data from 
+; Wood-Vasey et al. 2007 (astro-ph/0701041), Table 9 (passed)
+; and  Riess et al. 2007 (astro-ph/0611572), Table 6 (Gold)
+;
+; When using this data please cite all three papers. 
+;
+; The data have been combined by normalizing to the 
+; low-redshift supernovae they had in common.
+; See http://www.dark-cosmology.dk/archive/SN for details. 
+;
+; Columns
+; SN= supernova identifier
+; z = redshift
+; mu= distance modulus
+; mu_err = error in distance modulus
+;
+;      SN         z       mu    mu_err
+    larry    0.01       0.00      0.00
+      moe    0.01       0.00      0.00
+    curly    0.01       0.00      0.00
