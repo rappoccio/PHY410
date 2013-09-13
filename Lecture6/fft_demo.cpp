@@ -55,6 +55,43 @@ recursive_transform(const vector< complex<double> >& data)
     return transform;
 }
 
+// Return Inverse Fast Fourier Transform (IFFT) using Danielson-Lanczos Lemma
+vector< complex<double> >
+recursive_inverse_transform(const vector< complex<double> >& data)
+{
+  std::vector<std::complex<double> > transform (data.size());
+  std::copy( data.begin(), data.end(), transform.begin() );
+
+  // conjugate the complex numbers
+  for ( std::vector< std::complex<double> >::iterator itransform = transform.begin(),
+	  itransformEnd = transform.end(); 
+	itransform != itransformEnd; ++itransform ){
+    *itransform = std::conj(*itransform);
+  }
+
+ 
+  // forward fft
+  transform = recursive_transform( transform );
+ 
+  // conjugate the complex numbers again
+  for ( std::vector< std::complex<double> >::iterator itransform = transform.begin(),
+	  itransformEnd = transform.end(); 
+	itransform != itransformEnd; ++itransform ){
+    *itransform = std::conj(*itransform);
+  }
+
+ 
+  // scale the numbers
+  // conjugate the complex numbers
+  for ( std::vector< std::complex<double> >::iterator itransform = transform.begin(),
+	  itransformEnd = transform.end(); 
+	itransform != itransformEnd; ++itransform ){
+    *itransform /= transform.size();
+  }
+
+  return transform;
+}
+
 // Return one-sided power spectrum of transformed data
 vector< vector<double> > power_spectrum(const vector< complex<double> >& data)
 {
@@ -116,14 +153,17 @@ int main()
 
     vector< complex<double> > P = recursive_transform(data);
 
+    vector< complex<double> > Pinv = recursive_inverse_transform( P );
+
     ofstream file; 
     file_name = "fft_co2.data";
     file.open(file_name.c_str());
     for (int j = 0; j < P.size(); j++) {
         double ang_freq = j;
         double mag = abs(P[j]);
-        file << ang_freq << '\t' << mag << '\n';
+	double inv = abs(Pinv[j]);
+        file << ang_freq << '\t' << data[j].real() << '\t' << mag << '\t' << inv << '\n';
     }
     file.close();
-    cout << " wrote P(ang_freq) values in " << file_name << endl;
+    cout << " wrote P and Pinv values in " << file_name << endl;
 }
