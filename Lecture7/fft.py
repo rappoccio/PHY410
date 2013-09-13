@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 import numpy
 from numpy.fft import fft
-from numpy import array
+from numpy import array, conj, divide
 
 
 
@@ -45,14 +45,16 @@ def fft_power(x) :
 
 def ifft(x) :
     # conjugate the complex numbers
-    x = [ complex(xi.real, -xi.imag) for xi in x]
+    x = conj(x)
  
     # forward fft
     X = fft( x );
  
     # conjugate the complex numbers again
-    X = [ complex(xi.real, -xi.imag) for xi in X]
+    X = conj(X)
  
     # scale the numbers
-    X /= len(X)
+    X = divide(X, len(X))
+
+    return X
     
