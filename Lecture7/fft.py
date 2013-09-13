@@ -30,8 +30,6 @@ def fft(x):
            [even[k] - exp(-2j*pi*k/N)*odd[k] for k in xrange(N/2)]
 
 
-
-
 def fft_power(x) :
     N = len(x)
     if N <=1 : return x
@@ -43,3 +41,18 @@ def fft_power(x) :
     for i in range(0,N/2+1) :
         power[i] /= float(N)
     return power
+
+
+def ifft(x) :
+    # conjugate the complex numbers
+    x = [ complex(xi.real, -xi.imag) for xi in x]
+ 
+    # forward fft
+    X = fft( x );
+ 
+    # conjugate the complex numbers again
+    X = [ complex(xi.real, -xi.imag) for xi in X]
+ 
+    # scale the numbers
+    X /= len(X)
+    
