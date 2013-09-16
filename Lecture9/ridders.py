@@ -4,7 +4,7 @@ from numpy import array, nan_to_num, inf
 def diff_fivepoint( f, x, h) :
     ''' f     : name of function to be differentiated
         x     : the point at which df/dx is required
-        h     : suggestion for an initial step size
+        h     : step size
     '''
     dfdx = ( f(x-2*h) - 8*f(x-h) + 8*f(x+h) - f(x+2*h)) / (12*h)
     return dfdx
@@ -12,7 +12,19 @@ def diff_fivepoint( f, x, h) :
     
     
 def diff_ridder(f,x,h):
-    ''' f     : name of function to be differentiated
+    ''' Purpose : to compute the derivative of f using Ridder's method.
+
+        Algorithm : Uses polynomial extrapolation to compute the derivative.
+                    Stores the "Neville's algorithm" tableaux in a table.
+
+                    Initially compute symmetric difference differential and error
+                    At each successive increase of the polynomial extrapolation,
+                         reduce the step size
+                         recompute the symmetric difference differential and error
+                         if error is better, keep
+                         else, continue
+        
+        f     : name of function to be differentiated
         x     : the point at which df/dx is required
         h     : suggestion for an initial step size
         error : estimate of error by algorithm
