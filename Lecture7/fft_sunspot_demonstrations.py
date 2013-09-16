@@ -53,7 +53,10 @@ maxfreq = 50
 # Now smooth the data
 for iY in range(maxfreq, len(Y)-maxfreq ) :
     Y[iY] = complex(0,0)
+    #Y[iY] = Y[iY] * (0.5 - 0.5 * math.cos(2*math.pi*iY/float(N-1))) 
 
+    #for iY in range(0,N) : 
+    #    Y[iY] = Y[iY] * math.exp(-1.0*iY / 50.0)
 
 powery = fft_power(Y)
 powerx = array([ float(i) for i in xrange(len(powery)) ] )
