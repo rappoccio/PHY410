@@ -1,7 +1,17 @@
 from math import sqrt, sin, cos, exp
 from numpy import array, nan_to_num, inf
- 
-def ridder(f,x,h):
+
+def diff_fivepoint( f, x, h) :
+    ''' f     : name of function to be differentiated
+        x     : the point at which df/dx is required
+        h     : suggestion for an initial step size
+    '''
+    dfdx = ( f(x-2*h) - 8*f(x-h) + 8*f(x+h) - f(x+2*h)) / (12*h)
+    return dfdx
+    
+    
+    
+def diff_ridder(f,x,h):
     ''' f     : name of function to be differentiated
         x     : the point at which df/dx is required
         h     : suggestion for an initial step size
@@ -45,10 +55,13 @@ error = 0.0
 h = 0.01
 
 for x in [2.0,3.0,4.0,5.0] :
-    xprime,error =  ridder( exp, x, h)
-    print 'exp({0:1.0f}) : True value = {1:38.32f}, Ridder = {2:38.32f}, exp error = {3:38.32f}, obs error = {4:38.32f}'.format( x, exp(x), xprime, h**4, error)
-    xprime,error =  ridder( sin, x, h)
-    print 'sin({0:1.0f}) : True value = {1:38.32f}, Ridder = {2:38.32f}, exp error = {3:38.32f}, obs error = {4:38.32f}'.format( x, cos(x), xprime, h**4, error)
-    xprime,error =  ridder( test_ridders_x2, x, h)
-    print 'x*2({0:1.0f}) : True value = {1:38.32f}, Ridder = {2:38.32f}, exp error = {3:38.32f}, obs error = {4:38.32f}'.format( x, 2*x, xprime, h**4, error)
+    xprime,error =  diff_ridder( exp, x, h)
+    xprime2 = diff_fivepoint(exp,x,h)
+    print 'exp({0:1.0f}) : True value = {1:38.32f}, diff_ridder = {2:38.32f}, diff_fivepoint = {3:38.32f}, exp error = {4:38.32f}, obs error = {5:38.32f}'.format( x, exp(x), xprime, xprime2, h**4, error)
+    xprime,error =  diff_ridder( sin, x, h)
+    xprime2 = diff_fivepoint(sin,x,h)
+    print 'sin({0:1.0f}) : True value = {1:38.32f}, diff_ridder = {2:38.32f}, diff_fivepoint = {3:38.32f}, exp error = {4:38.32f}, obs error = {5:38.32f}'.format( x, cos(x), xprime, xprime2, h**4, error)
+    xprime,error =  diff_ridder( test_ridders_x2, x, h)
+    xprime2 = diff_fivepoint(test_ridders_x2,x,h)
+    print 'x*2({0:1.0f}) : True value = {1:38.32f}, diff_ridder = {2:38.32f}, diff_fivepoint = {3:38.32f}, exp error = {4:38.32f}, obs error = {5:38.32f}'.format( x, 2*x, xprime, xprime2, h**4, error)
     
