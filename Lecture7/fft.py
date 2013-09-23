@@ -36,7 +36,7 @@ def fft_power(x) :
     power = [ 0.0 ] * (N/2+1)
     power[0] = abs(x[0])**2
     for i in range(1,N/2) :
-        power[i] = abs(x[i])**2 + abs(x[N/2-i])**2
+        power[i] = abs(x[i])**2 + abs(x[N-i])**2
     power[N/2] = abs(x[N/2])**2
     for i in range(0,N/2+1) :
         power[i] /= float(N)
