@@ -3,7 +3,7 @@
 libcpt.a : basalg.o diffeq.o graphics.o linalg.o nonlin.o random.o
 	ar rs libcpt.a basalg.o diffeq.o graphics.o linalg.o nonlin.o random.o
 
-basalg.o : basalg.cpp basalg.hpp
+basalg.o : basalg.cpp basalg.hpp basalg.icc
 	c++ -c basalg.cpp
 
 diffeq.o : diffeq.cpp diffeq.hpp matrix.hpp
@@ -20,3 +20,6 @@ nonlin.o : nonlin.cpp nonlin.hpp matrix.hpp
 
 random.o : random.cpp random.hpp
 	c++ -c random.cpp
+
+clean : 
+	rm -rf *.o *.a 

@@ -1,0 +1,184 @@
+
+//      class SimpleSearch functions
+template< typename T>
+double SimpleSearchT<T>::find_root(T const & f)
+{
+        double f0 = f(x0);
+        double f_of_x = f0;
+
+        int step = 0;
+        if ( verbose ) {
+                printHead("Simple Search with Step-Halving", accuracy, *os);
+                printStep(step, x0, dx, f_of_x, *os);
+        }
+
+        while ( std::abs(dx) > accuracy && f_of_x != 0 && ++step <= max_steps ) {
+                x0 += dx;                         //    take a step
+                f_of_x = f(x0);
+                if ( f0 * f_of_x < 0 ) {        //      jumped past root
+                        x0 -= dx;                       //      backup
+                        dx /= 2;                        //      halve the step size
+                }
+                if ( verbose )
+                        printStep(step, x0, dx, f_of_x, *os);
+        }
+
+        if ( step > max_steps )
+                printWarning(max_steps);
+        steps = step;
+        return x0;
+}
+// Define a convenient typedef for most common cases
+typedef SimpleSearchT<double (*)(double)> SimpleSearch;
+
+//      class BisectionSearch functions
+template< typename T>
+double BisectionSearchT<T>::find_root(T const & f)
+{
+        double f0 = f(x0);
+        double f1 = f(x1);
+
+        if ( f0 * f1 > 0 ) {
+                std::cerr << " BisectionSearch: sorry, root not bracketed!\n"
+                        << " f(" << x0 << ") = " << f0 << std::endl
+                        << " f(" << x1 << ") = " << f1 << std::endl
+                        << " Trying to bracket the root using bracket_root ..."
+                        << std::flush;
+                double save_x0 = x0;
+                double save_x1 = x1;
+                if ( bracket_root(f) ) {
+                        std::cerr << " Bracketing succeeded !\n"
+                                << " x0 = " << x0 << " x1 = " << x1
+                                << " continuing ..." << std::endl;
+                        f0 = f(x0);
+                        f1 = f(x1);
+                } else {
+                        std::cerr << " Sorry, bracketing attempt failed" << std::endl;
+                        x0 = save_x0;
+                        x1 = save_x1;
+                        return std::abs(f0) < std::abs(f1) ? x0 : x1;
+                }
+        }
+        if ( f0 == 0 )
+                return x0;
+        if ( f1 == 0 )
+                return x1;
+
+        double xHalf, fHalf = 0.5 * (f0 + f1);
+        int step = 0;
+        if ( verbose ) {
+                printHead("Bisection Search", accuracy, *os);
+                printStep(step, x0, x1 - x0, fHalf, *os);
+        }
+        do {                                         //         iteration loop
+                if ( ++step > max_steps )
+                        break;
+                xHalf = 0.5 * (x0 + x1);        //      bisection point
+                fHalf = f(xHalf);
+                if ( f0 * fHalf > 0 ) {  //     x0 and xHalf on same side of root
+                        x0 = xHalf;             //      replace x0 by xHalf
+                        f0 = fHalf;
+                } else {                 //     x1 and xHalf on same side of root
+                        x1 = xHalf;             //      replace x1 by xHalf
+                        f1 = fHalf;
+                }
+                if ( verbose )
+                        printStep(step, x0, x1 - x0, fHalf, *os);
+        } while ( std::abs(x1 - x0) > accuracy && fHalf != 0);
+
+        if ( step > max_steps )
+                printWarning(max_steps);
+        steps = step;
+        return xHalf;
+}
+// Define a convenient typedef for most common cases
+typedef BisectionSearchT<double (*)(double)> BisectionSearch;
+
+//      class SecantSearch functions
+
+template< typename T>
+double SecantSearchT<T>::find_root(T const & f)
+{
+        double f0 = f(x0);
+        double f1 = f(x1);
+
+        if ( f0 == 0 )
+                return x0;
+        if ( f1 == 0 )
+                return x1;
+
+        int step = 0;
+        if ( verbose ) {
+                printHead("Secant Search", accuracy, *os);
+                printStep(step, x0, x1 - x0, f1, *os);
+        }
+        do {
+                if ( ++step > max_steps )
+                        break;
+                if ( f0 == f1 ) {
+                        std::cerr << " Secant Search: f(x0) = f(x1), algorithm fails!\n"
+                                << " f(" << x0 << ") = " << f0 << std::endl
+                                << " f(" << x1 << ") = " << f1 << std::endl;
+                        break;
+                }
+                dx *= - f1 / ( f1 - f0 );
+                x0 = x1;
+                f0 = f1;
+                x1 += dx;
+                f1 = f(x1);
+                if ( verbose )
+                        printStep(step, x0, dx, f1, *os);
+        } while ( std::abs(dx) > accuracy && f1 != 0);
+
+        if ( step > max_steps )
+                printWarning(max_steps);
+        steps = step;
+        return x1;
+}
+// Define a convenient typedef for most common cases
+typedef SecantSearchT<double (*)(double)> SecantSearch;
+
+//      class TangentSearch functions
+
+template< typename T>
+double TangentSearchT<T>::find_root(T const & f,
+				T const & f_prime)
+{
+        double f0 = f(x0);
+        double f_prime0 = f_prime(x0);
+
+        if ( f0 == 0 )
+                return x0;
+
+        if ( f_prime0 != 0 )
+                dx = - f0 / f_prime0;
+
+        int step = 0;
+        if ( verbose ) {
+                printHead("Tangent Search", accuracy, *os);
+                printStep(step, x0, dx, f0, *os);
+        }
+        do {
+                if ( ++step > max_steps )
+                        break;
+                if ( f_prime0 == 0 ) {
+                        std::cerr << " Tangent Search: f'(x0) = 0, algorithm fails!\n"
+                                << " f(" << x0 << ") = " << f0 << std::endl
+                                << " f'(" << x0 << ") = " << f_prime0 << std::endl;
+                        break;
+                }
+                dx = - f0 / f_prime0;
+                x0 += dx;
+                f0 = f(x0);
+                f_prime0 = f_prime(x0);
+                if ( verbose )
+                        printStep(step, x0, dx, f0, *os);
+        } while ( std::abs(dx) > accuracy && f0 != 0);
+
+        if ( step > max_steps )
+                printWarning(max_steps);
+        steps = step;
+        return x0;
+}
+// Define a convenient typedef for most common cases
+typedef TangentSearchT<double (*)(double)> TangentSearch;
