@@ -6,7 +6,7 @@ CC=g++
 CFLAGS=-c -Wall
 LDFLAGS=-I$(INCLUDEPATH) -L$(LD_LIBRARY_PATH) -lcpt
 
-all: test_matrix scattering
+all: scattering wheatstone
 
 $(SRC): $(SRC).o
 	$(CC) $(LDFLAGS) $(SRC).o -o $(SRC)
@@ -15,4 +15,4 @@ $(SRC).o: $(SRC).cpp
 	$(CC) $(CFLAGS)  $(LDFLAGS) $(SRC).cpp
 
 clean:
-	rm -rf *o test_matrix scattering
+	rm -rf *o scattering wheatstone
