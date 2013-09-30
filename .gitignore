@@ -3,3 +3,5 @@ hw1*
 backup*
 .DS_Store
 *.pyc
+*.o
+*.a
