@@ -1,7 +1,7 @@
 # makefile for computational physics toolkit (cpt)
 
-libcpt.a : basalg.o diffeq.o graphics.o linalg.o nonlin.o random.o
-	ar rs libcpt.a basalg.o diffeq.o graphics.o linalg.o nonlin.o random.o
+libcpt.a : basalg.o diffeq.o graphics.o linalg.o polyfit.o nonlin.o random.o
+	ar rs libcpt.a basalg.o diffeq.o graphics.o linalg.o polyfit.o nonlin.o random.o
 
 basalg.o : basalg.cpp basalg.hpp basalg.icc
 	c++ -c basalg.cpp
@@ -14,6 +14,10 @@ graphics.o : graphics.cpp graphics.hpp matrix.hpp
 
 linalg.o : linalg.cpp linalg.hpp matrix.hpp
 	c++ -c linalg.cpp
+
+polyfit.o : polyfit.cpp polyfit.hpp matrix.hpp
+	c++ -c polyfit.cpp
+
 
 nonlin.o : nonlin.cpp nonlin.hpp matrix.hpp
 	c++ -c nonlin.cpp

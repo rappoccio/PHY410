@@ -14,6 +14,8 @@ namespace cpt
 
     extern Matrix<double,2> transpose(const Matrix<double,2>&);
 
+    extern double inverse(  Matrix<double,2> m,  Matrix<double,2> & minv);
+
     extern void solve_Gauss_Jordan(Matrix<double,2>& A, Matrix<double,2>& B);
 
     extern void solve_LU_decompose(Matrix<double,2>& A, Matrix<double,2>& B);

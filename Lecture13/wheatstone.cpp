@@ -17,6 +17,7 @@ int main()
     Matrix<double,2> v(3, 1);       // column vector with 3 rows
     v[0][0] = v0;
     cout << " v = \n" << v << endl;
+    cout << "v.dim1 = " << v.dim1() << endl;
  
     Matrix<double,2> R(3, 3);       // 3x3 resistance matrix
     R[0][0] = r1 + rv;              // set components using slicing notation
@@ -32,6 +33,8 @@ int main()
     R(2,2) = rx;
  
     cout << " R = \n" << R << std::endl;
+    cout << " R.dim1 = " << R.dim1() << endl;
+    cout << " R.dim2 = " << R.dim2() << endl;
  
     // the solve_Gauss_Jordan replaces R by R^-1 and v by i
     // so save the original R and copy v into a vector i
