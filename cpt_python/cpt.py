@@ -5,6 +5,7 @@
 import math
 import cmath
 import sys
+import copy
 
 def dft(data, inverse=False):
     """Return Discrete Fourier Transform (DFT) of a complex data vector"""
@@ -862,3 +863,163 @@ def root_tangent(f, fp, x0, accuracy=1.0e-6, max_steps=20, root_debug=False):
             root_print_step(step, x0, dx, f0)
     return x0
 
+
+
+
+def polyfit( x, y, sigma, M ) :
+    '''
+    Adapted from example code in 
+    Garcia, "Numerical Methods for Physics", Second Edition.
+    Download available at : 
+    http://www.mathworks.com/matlabcentral/fileexchange/2270-numerical-methods-for-physics-2e/all_files
+    This adapts the usage in two ways : 
+
+
+    inputs :
+      * x : dependent variable (data x values 0... n_data-1)
+      * y : independent variable (data y values 0...n_data-1)
+      * sigma : uncertainties on y (0...n_data-1)
+      * M : order of polynomial to fit
+
+    returns :
+      * a_fit : coefficients of the polynomial fit (0...M-1)
+      * sig_a : uncertainties on a(0...M-1)
+      * yy    : fitted y values (0...n_data-1)
+      * chisqr: chisquared value
+    '''
+
+    # Form the vector b and design matrix A
+    N = len(x)
+    b = [0.0] * N
+    A = Matrix(N,M)
+    a_fit = [0.0] * M
+    sig_a = [0.0] * M
+    yy = [0.0] * N
+    chisq = 0.0
+    
+    for i in xrange(N) :
+        b[i] = y[i] / sigma[i]
+        for j in xrange(M) :
+            if sigma[i] > 0.0 :
+                A[i][j] = pow(x[i],float(j))/sigma[i]
+            else :
+                A[i][j] = 0.0
+
+    # Compute the correlation matrix C
+    C = Matrix(M,M)
+    Cinv = Matrix(M,M)
+    for i in xrange(M) :
+        for j in xrange(M) :
+            Cinv[i][j] = 0.0
+            for k in xrange(N) :
+                Cinv[i][j] += A[k][i] * A[k][j]
+
+
+    [determinant, C] = inverse( Cinv )
+    print ' Cinv is : '
+    print Cinv
+    print ' C is : '
+    print C
+ 
+    # Compute the least squares polynomial coefficients a_fit
+    for k in xrange(M) :
+        a_fit[k] = 0.0
+        for j in xrange(M) :
+            for i in xrange(N) :
+                a_fit[k] += C[k][j] * A[i][j] * b[i]
+
+    # Compute the estimated error bars for the coefficients
+    for j in xrange(M) :
+        sig_a[j] = math.sqrt( C[j][j] )
+        chisqr = 0.0
+        for i in xrange(N) :
+            yy[i] = 0.0
+            for j in xrange(M) :
+                yy[i] += a_fit[j] * pow( x[i], float(j) )
+            delta = (y[i] - yy[i]) / sigma[i]
+            chisqr += delta**2
+
+    return [ a_fit, sig_a, yy, chisq]
+
+
+def inverse(A) :
+    '''
+    # Input
+    #    A    -    Matrix A (N by N)
+    # Outputs
+    #   Ainv  -    Inverse of matrix A (N by N)
+    #  determ -    Determinant of matrix A (return value)
+    '''
+
+
+    N = len(A)
+    M = len(A[0])
+    if N != M :
+        return None
+  
+    Ainv = copy.deepcopy(A)
+    
+    scale = [0.0] * N
+    b = Matrix(N,N)
+    index = [0] * N
+
+
+    # Matrix b is initialized to the identity matrix
+    for i in xrange(N) :
+        b[i][i] = 1.0
+
+    # Set scale factor, scale(i) = max( |a(i,j)| ), for each row
+    for i in xrange(N) :
+        index[i] = i                         # Initialize row index list
+        scalemax = 0.
+        for j in xrange(N) :
+            imax = abs(A[i][j])
+            if imax > scalemax :
+                scalemax = imax
+        scale[i] = scalemax
+
+    # Loop over rows k = 0, ..., (N-2)
+    signDet = 1
+    for k in xrange(N-1) :
+        #* Select pivot row from max( |a(j,k)/s(j)| )
+        ratiomax = 0.0
+        jPivot = k
+        for i in range(k,N) : 
+            ratio = abs(A[index[i]][k])/scale[index[i]]
+            if ratio > ratiomax :
+                jPivot = i
+                ratiomax = ratio
+
+        #* Perform pivoting using row index list
+        indexJ = index[k]
+        if  jPivot != k :               # Pivot
+            indexJ = index[jPivot]
+            index[jPivot] = index[k]   # Swap index jPivot and k
+            index[k] = indexJ
+            signDet *= -1                          # Flip sign of determinant
+
+        #* Perform forward elimination
+        for i in range(k+1,N) : 
+            coeff = A[index[i]][k]/A[indexJ][k]
+            for j in range(k+1,N) : 
+                A[index[i]][j] -= coeff*A[indexJ][j]
+            A[index[i]][k] = coeff
+            for j in xrange(N) :
+                b[index[i]][j] -= A[index[i]][k]*b[indexJ][j]
+
+    # Compute determinant as product of diagonal elements
+    determ = signDet         # Sign of determinant
+    for i in xrange(N) : 
+        determ *= A[index[i]][i]
+
+    # Perform backsubstitution
+    for k in xrange(N) : 
+        Ainv[N-1][k] = b[index[N-1]][k]/A[index[N-1]][N-1]
+        for i in range(N-1,-1,-1):
+            sumi = b[index[i]][k]
+            for j in range(i+1,N) :
+                sumi -= A[index[i]][j]*Ainv[j][k]
+            Ainv[i][k] = sumi / A[index[i]][i]
+           
+
+    return [determ, Ainv]
