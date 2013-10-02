@@ -6,7 +6,7 @@ CC=g++
 CFLAGS=-c -Wall
 LDFLAGS=-I$(INCLUDEPATH) -L$(LD_LIBRARY_PATH) -lcpt
 
-all: co2_polyfit
+all: co2_polyfit bvp_example
 
 $(SRC): $(SRC).o
 	$(CC) $(LDFLAGS) $(SRC).o -o $(SRC)
@@ -15,4 +15,4 @@ $(SRC).o: $(SRC).cpp
 	$(CC) $(CFLAGS)  $(LDFLAGS) $(SRC).cpp
 
 clean:
-	rm -rf *o co2_polyfit
+	rm -rf *o co2_polyfit bvp_example

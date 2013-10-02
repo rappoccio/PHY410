@@ -25,6 +25,12 @@ namespace cpt
     extern Matrix<double,1> solve_eigen_generalized(Matrix<double,2>& A,
                                                     Matrix<double,2>& S);
 
+    extern Matrix<double,1> solve_tridiag( Matrix<double,1> const & a,
+					   Matrix<double,1> const & b,
+					   Matrix<double,1> const & c,
+					   Matrix<double,1> const & r,
+					   unsigned long n);
+
     template<class T> Matrix<T,2> operator+(
         const Matrix<T,2>& m1, const Matrix<T,2>&m2)
     {

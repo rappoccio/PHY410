@@ -96,6 +96,40 @@ Matrix<double,2> transpose(
     return( determ );        
   }
 
+  // Adapted from Numerical Recipes in C, 1992, 
+  // "tridag" method, Section 2.4. 
+Matrix<double,1> solve_tridiag( Matrix<double,1> const & a,
+				Matrix<double,1> const & b,
+				Matrix<double,1> const & c,
+				Matrix<double,1> const & r,
+				unsigned long n) {
+  float bet;
+  Matrix<double,1> gam(n);
+  Matrix<double,1> u(n);
+
+  if ( b[0] == 0.0 ) {
+    return u;
+  } 
+  u[0] = r[0] / (bet=b[0]);
+  for ( unsigned long j = 1; j < n; ++j ) {
+    gam[j] = c[j-1] / bet;
+    bet = b[j] - a[j] * gam[j];
+    if ( bet == 0.0 ) {
+      return u;
+    }
+    u[j] = (r[j]-a[j]*u[j-1]) / bet;
+  }
+  for ( unsigned int j=n-2;j>0;j--) {
+    u[j] -= gam[j+1]*u[j+1];
+  }
+  u[0] -= gam[1]*u[1];
+
+
+  return u;
+}
+
+
+
 void solve_Gauss_Jordan(Matrix<double,2>& A, Matrix<double,2>& B) {
 
     int n = A.dim1();
