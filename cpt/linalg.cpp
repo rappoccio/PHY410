@@ -296,6 +296,9 @@ void solve_LU_decompose(Matrix<double,2>& A, Matrix<double,2>& B) {
     delete [] indx;
 }
 
+// Householder reduction of a real, symmetric matrix a. On output, a is replaced by
+// the orthogonal matrix Q effecting the transofrmation. d returns the diagonal elements of the
+// tridiagonal matrix, and e the off-diagonal elements with e[0]=0. 
 void reduce_Householder(Matrix<double,2>& A, Matrix<double,1>& d, Matrix<double,1>& e) {
 
     int n = d.dim1();
@@ -391,6 +394,18 @@ inline double sign(double a, double b) {
     }
 }
 
+//Adapted from Numerical Recipes routine "tqli".
+// QL algorithm with implicit shifts, to determine the eigenvalues and
+// eigenvectors of a real, symmetric, tridiagonal matrix, or of a real,
+// symmetric matrix previously reduced by Householder reduction. On input,
+// d contins the diagonal elements of the tridiagonal matrix. On output,
+// it returns the eigenvalues. The vector e inputs the subdiagonal elements
+// of the tridiagonal matrix, with e[0] arbitrary.On output e is destroyed.
+// If the eigenvectors of a tridiagonal matrix are desired, the matrix
+// z is input as the identity matrix. If the eigenvectors of
+// a matrix that has been reduced by Householder reduction are required, then z is input as the
+// matrix output by Householder reduction. In either case, the kth column of z returns the
+// normalized eigenvector corresponding to d[k]. 
 void solve_TQLI(Matrix<double,1>& d, Matrix<double,1>& e, Matrix<double,2>& z) {
 
     int n = d.dim1();
@@ -470,31 +485,53 @@ void sort_eigen(Matrix<double,1>& d, Matrix<double,2>& z) {
     }
 }
 
+// solves eigenvalue problem A x = e x
+// returns vector of eigenvalues and replaces A by matrix of eigenvectors
+// Utilizes the Householder method to reduce to tridiagonal form.
+// Then use the TQLI method (QL algorithm with implicit shifts)
+// to determine the eigenvalues and eigenvectors of that matrix. 
 Matrix<double,1> solve_eigen_symmetric(Matrix<double,2>& A)
 {
-    // solves eigenvalue problem A x = e x
-    // returns vector of eigenvalues and replaces A by matrix of eigenvectors
     int n = A.dim1();
     Matrix<double,1> d(n), e(n);
     reduce_Householder(A, d, e);
     solve_TQLI(d, e, A);
-    sort_eigen(d, A);
+    //sort_eigen(d, A);    // <<<--- if you want sorted eigenvalues/vectors, can do it here
     return d;
 }
 
-Matrix<double,1> solve_eigen_generalized(Matrix<double,2>& A, Matrix<double,2>& S)
+  Matrix<double,1> solve_eigen_generalized(Matrix<double,2>& A, Matrix<double,2>& S, bool verbose)
 {
     // solves generalized eigenvalue problem Ax = e S x
     int n = A.dim1();
+    if ( verbose ) {
+      std::cout << "Solving generalized eigenvalue problem  Ax = e S x:" << std::endl;
+      std::cout << "A = " << std::endl << A << std::endl;
+      std::cout << "S = " << std::endl << S << std::endl;
+    }
     Matrix<double,2> V = S;
     Matrix<double,1> mu = solve_eigen_symmetric(V);
+    if ( verbose ) 
+      std::cout << "mu= " << std::endl << mu << std::endl;
     for (int i = 0; i < n; i++)
         for (int j = 0; j < n; j++)
             V[i][j] /= sqrt(mu[j]);
+
+    if ( verbose ) 
+      std::cout << "V = " << std::endl << V << std::endl;
     Matrix<double,2> VT = transpose(V);
+    if ( verbose ) 
+      std::cout << "V^T" << std::endl << VT << std::endl;
     A = VT * A * V;
+    if ( verbose ) 
+      std::cout << "V^T A V =" << std::endl << A << std::endl;
+    Matrix<double,2> Ainv(A.dim1(),A.dim2());
     Matrix<double,1> e = solve_eigen_symmetric(A);
+    if ( verbose ) 
+      std::cout << "e =" << std::endl << e << std::endl;
     A = V * A;
+    if ( verbose ) 
+      std::cout << "V (V^T A V) = " << std::endl << A << std::endl;
     return e;
 }
 

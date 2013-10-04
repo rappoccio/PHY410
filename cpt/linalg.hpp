@@ -23,7 +23,8 @@ namespace cpt
     extern Matrix<double,1> solve_eigen_symmetric(Matrix<double,2>& A);
 
     extern Matrix<double,1> solve_eigen_generalized(Matrix<double,2>& A,
-                                                    Matrix<double,2>& S);
+                                                    Matrix<double,2>& S,
+						    bool verbose=false);
 
     extern Matrix<double,1> solve_tridiag( Matrix<double,1> const & a,
 					   Matrix<double,1> const & b,

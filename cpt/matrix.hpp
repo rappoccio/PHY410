@@ -528,6 +528,31 @@ public:
 
     template<class F> Matrix apply_new(F f) { return xfer(Matrix(*this,f)); }
 
+    Matrix<T,1> operator*(  Matrix<T,1> const & v ) {
+      Matrix<T,1> prod( this->dim1() );
+      for ( unsigned int i = 0; i < this->dim1(); ++i ) {
+	prod[i] = 0.0;
+	for ( unsigned int j = 0; j < this->dim2(); ++j )  {
+	  prod[i] += (*this)[i][j] * v[j];
+	}
+      }
+      return prod;
+    }
+
+
+    Matrix<T,2> operator*(  Matrix<T,2> const & m ) {
+      Matrix<T,2> prod( this->dim1(), m.dim2() );
+      for ( unsigned int i = 0; i < this->dim1(); ++i ) {
+	for ( unsigned int j = 0; j < m.dim2(); ++j )  {
+	  prod[i][j] = 0.0;
+	  for ( unsigned int k = 0; k < this->dim2(); ++k ) {
+	    prod[i][j] += (*this)[i][k] * m[k][j];
+	  }
+	}
+      }
+      return prod;
+    }
+
     void swap_rows(Index i, Index j)
         // swap_rows() uses a row's worth of memory for better run-time performance
         // if you want pairwise swap, just write it yourself
@@ -732,6 +757,7 @@ template<class T> T dot_product(const Matrix<T>&a , const Matrix<T>& b)
     return sum;
 }
 
+
 //-----------------------------------------------------------------------------
 
 template<class T, int N> Matrix<T,N> xfer(Matrix<T,N>& a)
@@ -831,13 +857,14 @@ template<class T> std::ostream& operator<<(std::ostream& os, const Matrix<T>& v)
 {
     // os << '{';
 
-    for (Index i = 0; i<v.dim1(); ++i) {
-        os << "\t";
-        os << v(i);
-    }
+  char buff[1000];
+  for (Index i = 0; i<v.dim1(); ++i) {
+    sprintf(buff, "%6.2f" , v(i));
+    os << "|" << buff << "|" << std::endl;
+  }
 
-    // os << '}';
-    return os;
+  // os << '}';
+  return os;
 }
 
 //-----------------------------------------------------------------------------
@@ -846,8 +873,16 @@ template<class T> std::ostream& operator<<(std::ostream& os, const Matrix<T,2>& 
 {
     // os << "{\n";
 
-    for (Index i = 0; i<m.dim1(); ++i)
-        os << m[i] << '\n';
+  char buff[1000];
+  for (Index i = 0; i<m.dim1(); ++i){
+
+    os << "|" ;
+    for ( Index j = 0; j < m.dim2(); ++j ){
+      sprintf(buff, "%6.2f" , m[i][j]);
+      os << buff << '\t';
+    }
+    os << "|" << std::endl;
+  }
 
     // os << '}';
     return os;

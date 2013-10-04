@@ -276,6 +276,35 @@ def solve_LU_decompose(A, B):
     d = ludcmp(A, indx)
     lubksb(A, indx, B)
 
+
+# Adapted from Numerical Recipes in C, 1992, 
+# "tridag" method, Section 2.4. 
+def solve_tridiag( a, b, c, r, n) :
+    bet = 0.0
+    gam = [0.0] * n
+    u = [0.0] * n
+    
+    if b[0] == 0.0  :
+        return u
+
+    bet = b[0]
+    u[0] = r[0] / bet
+    for j in range(1,n) :
+        gam[j] = c[j-1] / bet
+        bet = b[j] - a[j] * gam[j]
+        if bet == 0.0 :
+            return u
+        u[j] = (r[j]-a[j]*u[j-1]) / bet
+
+    for j in range(n-2,j,-1) : 
+        u[j] -= gam[j+1]*u[j+1]
+
+    u[0] -= gam[1]*u[1]
+
+    return u
+
+
+
 def reduce_Householder(A, d, e):
     """ A is a matrix and d and e are vectors
     """
