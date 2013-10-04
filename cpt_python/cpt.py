@@ -120,10 +120,13 @@ def Matrix_print(m):
     """ Prints rows and columns in table form.
     """
     for row in range(len(m)):
-        line = ""
+        values = []
+        line = ''
         for col in range(len(m[row])):
-            line += "\t" + repr(m[row][col])
-        print line
+            line += '{' + str( len(values) ) + ':6.2f} '
+            values.append( m[row][col] )
+        s = line.format( *values )        
+        print s
 
 def Matrix_transpose(m):
     """ Returns a new matrix with [i][j] element = m[j][i].
@@ -476,7 +479,7 @@ def solve_eigen_symmetric(A):
     C = Matrix_copy(A)
     reduce_Householder(C, d, e)
     solve_TQLI(d, e, C)
-    sort_eigen(d, C)
+    #sort_eigen(d, C)
     return d, C
 
 def solve_eigen_generalized(A, S):
@@ -490,7 +493,10 @@ def solve_eigen_generalized(A, S):
     s, V = solve_eigen_symmetric(V)
     for i in range(n):
         for j in range(n):
-            V[i][j] /= math.sqrt([s[j]])
+            V[i][j] /= math.sqrt(s[j])
+    VT = Matrix_transpose(V)
+    C = Matrix_multiply( A, V)
+    C = Matrix_multiply( VT, C )
     e, C = solve_eigen_symmetric(C)
     C = Matrix_multiply(V, C)
     return e, C
