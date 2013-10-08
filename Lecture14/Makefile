@@ -3,16 +3,17 @@
 CC=g++
 # Hey!, I am comment number 2. I want to say that CFLAGS will be the
 # options I'll pass to the compiler.
-CFLAGS=-c -Wall
-LDFLAGS=-I$(INCLUDEPATH) -L$(LD_LIBRARY_PATH) -lcpt
+LIBS=-I$(INCLUDEPATH) -L$(LD_LIBRARY_PATH) -lcpt
+
 
 all: co2_polyfit bvp_example
 
-$(SRC): $(SRC).o
-	$(CC) $(LDFLAGS) $(SRC).o -o $(SRC)
+co2_polyfit: co2_polyfit.cpp
+	$(CC) $^  $(LIBS) -o co2_polyfit
 
-$(SRC).o: $(SRC).cpp
-	$(CC) $(CFLAGS)  $(LDFLAGS) $(SRC).cpp
+bvp_example: bvp_example.cpp
+	$(CC) $^  $(LIBS) -o bvp_example
+
 
 clean:
 	rm -rf *o co2_polyfit bvp_example
