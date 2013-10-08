@@ -3,16 +3,17 @@
 CC=g++
 # Hey!, I am comment number 2. I want to say that CFLAGS will be the
 # options I'll pass to the compiler.
-CFLAGS=-c -Wall
-LDFLAGS=-I$(INCLUDEPATH) -L$(LD_LIBRARY_PATH) -lcpt
+LIBS=-I$(INCLUDEPATH) -L$(LD_LIBRARY_PATH) -lcpt
+
 
 all: triatomic matrixmult
 
-$(SRC): $(SRC).o
-	$(CC) $(LDFLAGS) $(SRC).o -o $(SRC)
+triatomic: triatomic.cpp
+	$(CC) $^  $(LIBS) -o triatomic
 
-$(SRC).o: $(SRC).cpp
-	$(CC) $(CFLAGS)  $(LDFLAGS) $(SRC).cpp
+matrixmult: matrixmult.cpp
+	$(CC) $^  $(LIBS) -o matrixmult
+
 
 clean:
 	rm -rf *o triatomic matrixmult
