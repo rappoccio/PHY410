@@ -12,21 +12,21 @@
 namespace cpt
 {
 
-    extern Matrix<double,2> transpose(const Matrix<double,2>&);
+    Matrix<double,2> transpose(const Matrix<double,2>&);
 
-    extern double inverse(  Matrix<double,2> m,  Matrix<double,2> & minv);
+    double inverse(  Matrix<double,2> m,  Matrix<double,2> & minv);
 
-    extern void solve_Gauss_Jordan(Matrix<double,2>& A, Matrix<double,2>& B);
+    void solve_Gauss_Jordan(Matrix<double,2>& A, Matrix<double,2>& B);
 
-    extern void solve_LU_decompose(Matrix<double,2>& A, Matrix<double,2>& B);
+    void solve_LU_decompose(Matrix<double,2>& A, Matrix<double,2>& B);
 
-    extern Matrix<double,1> solve_eigen_symmetric(Matrix<double,2>& A);
+    Matrix<double,1> solve_eigen_symmetric(Matrix<double,2>& A);
 
-    extern Matrix<double,1> solve_eigen_generalized(Matrix<double,2>& A,
+    Matrix<double,1> solve_eigen_generalized(Matrix<double,2>& A,
                                                     Matrix<double,2>& S,
 						    bool verbose=false);
 
-    extern Matrix<double,1> solve_tridiag( Matrix<double,1> const & a,
+    Matrix<double,1> solve_tridiag( Matrix<double,1> const & a,
 					   Matrix<double,1> const & b,
 					   Matrix<double,1> const & c,
 					   Matrix<double,1> const & r,
