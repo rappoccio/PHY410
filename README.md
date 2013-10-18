@@ -15,8 +15,10 @@ This also includes software from the following sources :
 -     ---> Also some translated to python
 
 The examples are typically provided in both python and C++ with
-a few exceptions. These have been tested with python 2.7.2 and 
-with GCC 4.7.3_0. 
+a few exceptions. These have been tested with :
+ - Mac OS 10.8 : python 2.7.2 and GCC 4.7.3_0.
+ - Windows 7 + cygwin : python 2.7.5 and GCC 4.8.1
+ - Ubuntu 12.04 LTS : 
 
 The examples include several instances where matplotlib is used. 
 There are also hooks to use gnuplot. Both are often commented
