@@ -25,7 +25,7 @@ Additional installation instructions :
     > Install XCode from the App Store
  - Windows 7 + cygwin
     > During installation, change the "Interpreters" 
-      and "Development" installations from "Default" to "Install". 
+      and "Devel" installations from "Default" to "Install". 
  - Ubuntu 12.04 : 
     > Install g++ and make on the command line via:
       sudo apt-get install build-essential
