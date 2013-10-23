@@ -21,6 +21,15 @@ inline double SIGN(const double& a, const double& b)
     return b >= 0 ? (a >= 0 ? a : -a) : (a >= 0 ? -a : a);
 }
 
+/*
+  Given a function func, and given distinct initial points ax and bx,
+  this routine searches in the downhill direction (defiend by the function as evaluated
+  at the initial points) and returns new points ax, bx, cx that bracket the minimum
+  of the function. Also returned are the function values at the three points
+  fa, fb, and fc.
+
+  To maximize instead of minimize switch "sign" to -1.0
+*/
 template<typename T> // T looks like double (*f)(double)
 void mnbrak(double &ax, double &bx, double &cx,
       double &fa, double &fb, double &fc,
@@ -84,6 +93,15 @@ inline void shft2(double &a, double &b, const double c)
     a=b;  b=c;
 }
 
+/*
+  Given a function f, and given a bracketing triplet of abscissas ax, bx, cx
+  (such that bx is between ax and cx) and f(bx) is less than both f(ax) and f(cx),
+  this routine performs a golden section search for the minimum, isolating it to a fractional
+  precision of about tol. The abscissa of the minimum is returned as "xmin" and the minimum function
+  value is returnd as "golden", the returned function value.
+
+  To maximize instead of minimize switch "sign" to -1.0
+*/
 template<typename T> // T looks like double (*f)(double)
 double golden(const double ax, const double bx, const double cx,
 	      T f, const double tol, double &xmin, double sign=1.0)

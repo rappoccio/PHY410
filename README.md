@@ -13,6 +13,8 @@ This also includes software from the following sources :
 - FFT implementations (http://rosettacode.org/wiki/Fast_Fourier_transform)
 - Numerical Recipes in C (http://apps.nrbook.com/c/index.html)
 -     ---> Also some translated to python
+- http://pistol.googlecode.com/svn-history/r3/Pistol/ConjGrad.py
+-     ---> this translates NR routine "mnbrak" to python
 
 The examples are typically provided in both python and C++ with
 a few exceptions. These have been tested with :

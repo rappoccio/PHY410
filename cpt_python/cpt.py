@@ -6,6 +6,7 @@ import math
 import cmath
 import sys
 import copy
+import scipy.optimize
 
 def dft(data, inverse=False):
     """Return Discrete Fourier Transform (DFT) of a complex data vector"""
@@ -500,6 +501,22 @@ def solve_eigen_generalized(A, S):
     e, C = solve_eigen_symmetric(C)
     C = Matrix_multiply(V, C)
     return e, C
+
+
+def find_maximum( a, b, f, tol ) :
+    negf = lambda x : -1.0*f(x)
+    xmin = scipy.optimize.minimize( fun=negf, x0=a, tol=tol )
+    fxmin = negf(xmin.x)
+    return [xmin.x,fxmin]
+
+
+
+def find_minimum( a, b, f, tol ) :
+    xmin = scipy.optimize.minimize( fun=f, x0=a, tol=tol )
+    fxmin = f(xmin.x)
+    return [xmin.x, fxmin]
+
+
 
 def line_search(xold, fold, g, p, stpmax, func):
     """ Returns x, f, check
