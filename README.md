@@ -38,37 +38,26 @@ out. To get started with these, try these links :
 
 
 scipy and matplotlib : 
+======================
 
 Mac OS X: Download :
-
 http://fonnesbeck.github.io/ScipySuperpack/
 
 Windows and cygwin : execute these commands :
-
-
 wget http://peak.telecommunity.com/dist/ez_setup.py
-
 python ez_setup.py
-
 easy_install -U scipy
-
-
-
 
 Ubuntu : 
 
 First try to get this with apt-get:
-
 sudo apt-get install python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
 
 For me this installed version 0.9.0, but we need 0.13.0. To get that:
  
 wget https://pypi.python.org/packages/source/s/scipy/scipy-0.13.0.tar.gz
-
 tar -zxvf scipy-0.13.0.tar.gz
-
 cd scipy-0.13.0
-
 sudo python setuppy.py install
 
 
