@@ -9,6 +9,14 @@ using namespace std;
 #include "nonlin.hpp"
 using namespace cpt;
 
+// Defines the base class for an ion object.
+// The parameters are :
+//  - charge ( in e )
+//  - mass (in AMU)
+//  - radius (in nm)
+//  - position (x,y,z in nm)
+// This is a class that will be used by Na and Cl
+// below to store the common data members. 
 class Ion {                     // defines an ion object
 public:                         // all properties are
     string name;
@@ -20,6 +28,8 @@ public:                         // all properties are
         m(1.0), a(0.0) { }      // m = 1.0, and a = 0
 };
 
+// Na sets the parameters of an Ion with
+// parameters appropriate to sodium
 class Na : public Ion {         // Na inherits members of Ion
     void set_constants() { q = +1;  m = 22.990;  a = 0.116;  name = "Na+"; }
 public:
@@ -33,6 +43,8 @@ public:
     }
 };
 
+// Cl sets the parameters of an Ion with
+// parameters appropriate to chlorine
 class Cl : public Ion {
 public:
     void set_constants() { q = -1;  m = 35.453;  a = 0.169;  name = "Cl-"; }
@@ -47,6 +59,18 @@ public:
     }
 };
 
+
+// The ion potential class represents the
+// potential energy and gradient for a set of ions that
+// obey the "Alkali-Halide" model we discussed in class.
+// The parameters are :
+  // double k ;        // Coulomb energy constant (eV nm)
+  // double alpha ;    // exponential repulsion prefactor (eV)
+  // double rho ;      // range of exponential repulsion (nm)
+  // double b ;        // 1/r^12 repulsion prefactor (eV)
+  // double c ;        // 1/r^12 repulsion range (nm)
+// The functional form is : 
+// V(rij) = -ke^2 / rij + alpha*e^(-rij/rho) + b(c/rij)^12
 class IonPotential {
 
 public : 
@@ -93,7 +117,17 @@ protected :
 };
 
 
-
+// The Cluster class represents a group of 
+// sodium and chlorine atoms in some particular
+// arrangement. 
+// This utilizes the "IonPotential" class from above
+// to compute the inter-ion potentials. 
+// The "minimize" function will use the BFGS algorithm
+// to minimize the potential energy, modifying the
+// inter-ion distances until it is reached. 
+// The data members are : 
+  // vector<Ion> ions;     // Vector of ions
+  // IonPotential pot;     // potential functor
 class Cluster {
 public:
 
@@ -109,6 +143,7 @@ public:
 
     unsigned int size() const { return ions.size();} 
 
+    // Sum the potential energies of the ion pairs
     double potential_energy()
     {
         double e = 0;
@@ -162,6 +197,12 @@ public:
     return pe;
   }
 
+  // Two different operator() methods : 
+  //    - The first accepts the position and computes the function's value.
+  //    - The second accepts the position and a reference to the gradient, and computes the gradient. 
+  // This way, the same class can be used in "minimize" as the functor object for the 
+  // function's value, and it's derivative, and the same numerical object will be used
+  // throughout, appropriately scaling the internal variables of the Cluster. 
   double operator() ( Matrix<double,1> & p)  {
     set_variables(p);
     return potential_energy();
@@ -196,9 +237,12 @@ protected :
 std::ostream& operator<<(std::ostream& os, const Cluster& c)
 {
     for (int i = 0; i < c.size(); i++) {
-        for (int j = 0; j < 3; j++)
-	  os << '\t' << c.ion(i).r[j];
-        os << '\n';
+      for (int j = 0; j < 3; j++) {
+	char buff[1000];
+	sprintf( buff, "%8.3f", c.ion(i).r[j] );
+	os << buff ;
+      }
+      os << std::endl;
     }
     return os;
 }

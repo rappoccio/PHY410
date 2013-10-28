@@ -9,8 +9,10 @@ int main()
     double r_Na[nNa][3] = { { 0, 0, 0 }, { a, a, 0} };
     double r_Cl[nCl][3] = { { a, 0, 0 }, { 0, a, 0 } };
 
-    Cluster cluster;
 
+    // Initialize the cluster, add guesses at the
+    // minimum arrangement. 
+    Cluster cluster;
     for (int i = 0; i < nNa; i++) {
         Matrix<double,1> r(3, r_Na[i]);
         cluster.add(Na(r));
@@ -23,12 +25,15 @@ int main()
          << " Initial potential energy = "
          << cluster.potential_energy() << endl;
 
+
+    // Minimize the function
     int iterations = 0;
     double accuracy = 1e-6;
-
     double pe = cluster.minimize( accuracy, iterations );
 
 
+    // Print out resulting files to be plotted in
+    // either matplotlib or gnuplot. 
     cout << " Minimized potential energy = " << pe << "\n"
          << " Binding energy of cluster  = " << pe / 2 << " eV\n"
          << " Number of iterations = " << iterations << endl;
