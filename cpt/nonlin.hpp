@@ -229,7 +229,7 @@ void line_search(
 template<typename T, typename F> 
 void minimize_BFGS(
     Matrix<double,1>& p, const double gtol, int& iter, double& fret,
-     T func, F dfunc)
+     T & func, F & dfunc)
 {
     const int ITMAX = 200;
     const double EPS = std::numeric_limits<double>::epsilon();
