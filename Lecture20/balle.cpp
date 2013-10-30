@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <math.h>
+#include <vector>
 using namespace std;
 
 int main() {
@@ -41,9 +42,10 @@ int main() {
   double tau;
   cout << "Enter timestep, tau (sec): "; cin >> tau;
   int iStep, maxStep = 1000;   // Maximum number of steps
-  double *xplot, *yplot, *xNoAir, *yNoAir;
-  xplot = new double [maxStep];  yplot = new double [maxStep];
-  xNoAir = new double [maxStep]; yNoAir = new double [maxStep];
+  std::vector<double> xplot (maxStep);  
+  std::vector<double> yplot (maxStep);
+  std::vector<double> xNoAir (maxStep);
+  std::vector<double> yNoAir (maxStep);
   for( iStep=0; iStep<maxStep; iStep++ ) {
 
     //* Record position (computed and theoretical) for plotting
@@ -104,8 +106,6 @@ int main() {
     noAirOut << xNoAir[i] << " ";
     noAirOut << yNoAir[i] << endl;
   }
-
-  delete []  xplot, yplot, xNoAir, yNoAir; // Release memory
 
   return 0;
 }
