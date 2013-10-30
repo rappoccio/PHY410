@@ -15,6 +15,7 @@ This also includes software from the following sources :
 -     ---> Also some translated to python
 - http://pistol.googlecode.com/svn-history/r3/Pistol/ConjGrad.py
 -     ---> this translates NR routine "mnbrak" to python
+- Numerical Methods for Physics (Alejandro L. Garcia) (http://www.algarcia.org/nummeth/Programs2E.html)
 
 The examples are typically provided in both python and C++ with
 a few exceptions. These have been tested with :
