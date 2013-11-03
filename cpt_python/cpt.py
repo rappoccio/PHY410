@@ -706,6 +706,22 @@ def chi_square_fit(x, y, err):
     chi_square = sum(((y[i] - a - b*x[i]) / err[i])**2 for i in range(n))
     return(a, b, sigma_a, sigma_b, chi_square)
 
+
+def Euler_step( p, dt, acceleration ) :
+    t = p[0]
+    theta = p[1]
+    dtheta_dt = p[2]
+    dtheta_dt_old = dtheta_dt
+
+    #apply Euler's algorithm
+    dtheta_dt += acceleration(p) * dt
+    theta += dtheta_dt_old * dt
+    t += dt
+    p[0] = t
+    p[1] = theta
+    p[2] = dtheta_dt
+    
+
 def RK4_step(x, dt, flow):
     """replaces x(t) by x(t + dt) using fourth order Runge-Kutta
     with derivative vector flow
