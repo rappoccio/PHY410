@@ -188,11 +188,15 @@ def main () :
         AvePeriod += period[i]
 
 
-    AvePeriod /= nPeriod
-    for i in xrange( nPeriod ) :
-        ErrorBar += (period[i] - AvePeriod)*(period[i] - AvePeriod)
-    ErrorBar = sqrt(ErrorBar/(nPeriod*(nPeriod-1)))
-    print "Average period = " + str( AvePeriod ) + " +/- " + str( ErrorBar )
+    if nPeriod > 0 : 
+        AvePeriod /= nPeriod
+        for i in xrange( nPeriod ) :
+            ErrorBar += (period[i] - AvePeriod)*(period[i] - AvePeriod)
+        if nPeriod > 1 :
+            ErrorBar = sqrt(ErrorBar/(nPeriod*(nPeriod-1)))
+        else :
+            ErrorBar = 0.0
+        print "Average period = " + str( AvePeriod ) + " +/- " + str( ErrorBar )
 
     #* Print out the plotting variables: t_plot, th_plot
     if plotTrajectory :
@@ -204,8 +208,8 @@ def main () :
         plotOut.close(  )
 
     poincareOut = file("poincare_plot.txt", 'w')
-    xi = [ poincare_map[i][0] for i in xrange(len(poincare_map)) ]
-    yi = [ poincare_map[i][1] for i in xrange(len(poincare_map)) ]
+    xi = [ poincare_map[i][0] for i in range(0, len(poincare_map)) ]
+    yi = [ poincare_map[i][1] for i in range(0, len(poincare_map)) ]
     for i in xrange( len(xi) ) : 
         s = str( xi[i] ) + ' ' + str( yi[i] ) + '\n'
         poincareOut.write( s ) 
