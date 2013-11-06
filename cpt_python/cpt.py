@@ -63,6 +63,19 @@ def sine_fft(data, inverse=False):
             sineft[k] *= 2.0 / N
     return sineft
 
+def fft_power(x) :
+    N = len(x)
+    if N <=1 : return x
+    power = [ 0.0 ] * (N/2+1)
+    power[0] = abs(x[0])**2
+    for i in range(1,N/2) :
+        power[i] = abs(x[i])**2 + abs(x[N-i])**2
+    power[N/2] = abs(x[N/2])**2
+    for i in range(0,N/2+1) :
+        power[i] /= float(N)
+    return power
+
+
 def cosine_fft(data, inverse=False):
     """Return Fast Cosine Transform of (N+1) data values
        including two boundary points with index 0, N.
