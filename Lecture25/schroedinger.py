@@ -193,5 +193,6 @@ for i in range(len(x_data)) :
 
 s2 = plt.subplot(2,1,2)
 plt.plot( E_data, F_data )
+plt.ylim( [-10, 10] )
 
 plt.show()
