@@ -187,10 +187,6 @@ static void printWarning(int max_steps)
       double x_guess
     );
 
-    bool bracket_root(
-      double f(double x)
-    );
-
     void set_accuracy(
       double epsilon
     );
@@ -240,8 +236,8 @@ static void printWarning(int max_steps)
   class SimpleSearchT : public RootFinder {
   public:
     SimpleSearchT() { max_steps = 1000; }
-    double find_root(T const & f);
-    double find_root(T const & f, double x_guess, double dx_guess) {
+    double find_root(T & f);
+    double find_root(T & f, double x_guess, double dx_guess) {
       set_first_root_estimate(x_guess);
       set_step_estimate(dx_guess);
       return find_root(f);
@@ -252,9 +248,13 @@ static void printWarning(int max_steps)
   class BisectionSearchT : public RootFinder {
   public:
     BisectionSearchT() { max_steps = 100; }
-    double find_root(T const & f);
+
+    bool bracket_root( T & f );
+
+
+    double find_root(T & f);
     double find_root(
-      T const & f, double x_guess, double x_second_guess
+      T & f, double x_guess, double x_second_guess
     ) {
       set_first_root_estimate(x_guess);
       set_second_root_estimate(x_second_guess);
@@ -266,9 +266,9 @@ static void printWarning(int max_steps)
   class SecantSearchT : public RootFinder {
   public:
     SecantSearchT() { max_steps = 30; }
-    double find_root(T const & f);
+    double find_root(T & f);
     double find_root(
-      T const & f, double x_guess, double x_second_guess
+      T & f, double x_guess, double x_second_guess
     ) {
       set_first_root_estimate(x_guess);
       set_second_root_estimate(x_second_guess);
@@ -280,9 +280,9 @@ static void printWarning(int max_steps)
   class TangentSearchT : public RootFinder {
   public:
     TangentSearchT() { max_steps = 20; }
-    double find_root(T const & f, T const & f_prime);
+    double find_root(T & f, T & f_prime);
     double find_root(
-      T const & f, T const & f_prime, double x_guess
+      T & f, T & f_prime, double x_guess
     ) {
       set_first_root_estimate(x_guess);
       return find_root(f, f_prime);

@@ -31,43 +31,6 @@ void RootFinder::set_second_root_estimate(double x_guess)
         dx = x1 - x0;
 }
 
-bool RootFinder::bracket_root(double f(double x))
-{
-     // This function will attempt to bracket the root of a function
-     // starting with the RootFinder data values x0 and x1, by
-     // geometrically expanding the interval [x0, x1] until the root
-     // is bracketed, or the number of steps exceeds max_steps
-
-        //      a convenient expansion factor
-        const double expansionFactor = 1.6;
-
-        if ( x0 == x1 ) {
-                cerr << "\n RootFinder::bracket_root: sorry, x0 = x1!\n"
-                        << " x0 = " << x0 << endl
-                        << " x1 = " << x1 << endl;
-                return false;
-        }
-
-        int step = 0;
-        double f0 = f(x0);
-        double f1 = f(x1);
-
-        while ( ++step <= max_steps ) {
-                if ( f0 * f1 <= 0 )
-                        return true;         // success .. root is bracketed
-                if ( abs(f0) < abs(f1) ) { // x0 probably closer to root
-                        x0 -= expansionFactor * dx;
-                        f0 = f(x0);
-                } else {                          // x1 probably closer to the root
-                        x1 += expansionFactor * dx;
-                        f1 = f(x1);
-                }
-                dx = x1 - x0;             // also adjust dx
-        }
-
-        printWarning(max_steps);   // max_steps has been exceeded
-        return false;
-}
 
 void RootFinder::set_accuracy(double epsilon)
 {

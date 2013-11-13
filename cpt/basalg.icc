@@ -1,7 +1,7 @@
 
 //      class SimpleSearch functions
 template< typename T>
-double SimpleSearchT<T>::find_root(T const & f)
+double SimpleSearchT<T>::find_root(T & f)
 {
         double f0 = f(x0);
         double f_of_x = f0;
@@ -32,8 +32,48 @@ double SimpleSearchT<T>::find_root(T const & f)
 typedef SimpleSearchT<double (*)(double)> SimpleSearch;
 
 //      class BisectionSearch functions
+
 template< typename T>
-double BisectionSearchT<T>::find_root(T const & f)
+
+bool BisectionSearchT<T>::bracket_root(T & f)
+{
+     // This function will attempt to bracket the root of a function
+     // starting with the RootFinder data values x0 and x1, by
+     // geometrically expanding the interval [x0, x1] until the root
+     // is bracketed, or the number of steps exceeds max_steps
+
+        //      a convenient expansion factor
+        const double expansionFactor = 1.6;
+
+        if ( x0 == x1 ) {
+                std::cerr << "\n RootFinder::bracket_root: sorry, x0 = x1!\n"
+                        << " x0 = " << x0 << std::endl
+                        << " x1 = " << x1 << std::endl;
+                return false;
+        }
+
+        int step = 0;
+        double f0 = f(x0);
+        double f1 = f(x1);
+
+        while ( ++step <= max_steps ) {
+                if ( f0 * f1 <= 0 )
+                        return true;         // success .. root is bracketed
+                if ( abs(f0) < abs(f1) ) { // x0 probably closer to root
+                        x0 -= expansionFactor * dx;
+                        f0 = f(x0);
+                } else {                          // x1 probably closer to the root
+                        x1 += expansionFactor * dx;
+                        f1 = f(x1);
+                }
+                dx = x1 - x0;             // also adjust dx
+        }
+
+        return false;
+}
+
+template< typename T>
+double BisectionSearchT<T>::find_root(T & f)
 {
         double f0 = f(x0);
         double f1 = f(x1);
@@ -97,7 +137,7 @@ typedef BisectionSearchT<double (*)(double)> BisectionSearch;
 //      class SecantSearch functions
 
 template< typename T>
-double SecantSearchT<T>::find_root(T const & f)
+double SecantSearchT<T>::find_root(T & f)
 {
         double f0 = f(x0);
         double f1 = f(x1);
@@ -141,8 +181,8 @@ typedef SecantSearchT<double (*)(double)> SecantSearch;
 //      class TangentSearch functions
 
 template< typename T>
-double TangentSearchT<T>::find_root(T const & f,
-				T const & f_prime)
+double TangentSearchT<T>::find_root(T & f,
+				T & f_prime)
 {
         double f0 = f(x0);
         double f_prime0 = f_prime(x0);

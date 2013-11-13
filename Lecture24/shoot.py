@@ -18,15 +18,15 @@ print ""
 print ""
 x_plot = []
 u_plot = []
-#print " Trajectory : "
+print " Trajectory : "
 stepper.xy = [ x0, u0, slope ]
-#print '{0:>8s} {1:>8s} {2:>8s}'.format( 'x', 'u', "u'" )
-#print '{0:8.4f} {1:8.4f} {2:8.4f}'.format( stepper.xy[0], stepper.xy[1], stepper.xy[2] )
+print '{0:>8s} {1:>8s} {2:>8s}'.format( 'x', 'u', "u'" )
+print '{0:8.4f} {1:8.4f} {2:8.4f}'.format( stepper.xy[0], stepper.xy[1], stepper.xy[2] )
 x_plot.append( stepper.xy[0] )
 u_plot.append( stepper.xy[1] )
 for i in range(stepper.N):
     stepper.step()
-    #print '{0:8.4f} {1:8.4f} {2:8.4f}'.format( stepper.xy[0], stepper.xy[1], stepper.xy[2] )
+    print '{0:8.4f} {1:8.4f} {2:8.4f}'.format( stepper.xy[0], stepper.xy[1], stepper.xy[2] )
     x_plot.append( stepper.xy[0] )
     u_plot.append( stepper.xy[1] )
 
