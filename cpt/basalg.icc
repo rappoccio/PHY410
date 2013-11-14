@@ -59,7 +59,7 @@ bool BisectionSearchT<T>::bracket_root(T & f)
         while ( ++step <= max_steps ) {
                 if ( f0 * f1 <= 0 )
                         return true;         // success .. root is bracketed
-                if ( abs(f0) < abs(f1) ) { // x0 probably closer to root
+                if ( std::abs(f0) < std::abs(f1) ) { // x0 probably closer to root
                         x0 -= expansionFactor * dx;
                         f0 = f(x0);
                 } else {                          // x1 probably closer to the root
