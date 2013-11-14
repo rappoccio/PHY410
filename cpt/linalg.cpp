@@ -540,7 +540,7 @@ Matrix<double,1> solve_eigen_symmetric(Matrix<double,2>& A)
 	    return ( (x > 0) && ((x & (x - 1)) == 0) );
     }
 
-    static Matrix<complex<double>,1> dft(
+    Matrix<complex<double>,1> dft(
         const Matrix<complex<double>,1>& v,
         const bool inverse=false)
     {
@@ -560,7 +560,7 @@ Matrix<double,1> solve_eigen_symmetric(Matrix<double,2>& A)
         return dft;
     }
 
-    static Matrix<complex<double>,1> fft_recursive(
+    Matrix<complex<double>,1> fft_recursive(
         const Matrix<complex<double>,1>& v,
         const bool inverse=false)
     {
@@ -593,7 +593,7 @@ Matrix<double,1> solve_eigen_symmetric(Matrix<double,2>& A)
         return fft;
     }
 
-    static void Danielson_Lanczos(
+    void Danielson_Lanczos(
         Matrix<complex<double>,1>& v,
         int two_pow_n,
         bool inverse)
@@ -612,7 +612,7 @@ Matrix<double,1> solve_eigen_symmetric(Matrix<double,2>& A)
         }
     }
 
-    static void bit_reverse(
+    void bit_reverse(
         Matrix<complex<double>,1>& v)
     {
         int N = v.dim1();
@@ -629,7 +629,7 @@ Matrix<double,1> solve_eigen_symmetric(Matrix<double,2>& A)
         }
     }
 
-    static void fft_two_pow(
+    void fft_two_pow(
         Matrix<complex<double>,1>& v,
         bool inverse)
     {

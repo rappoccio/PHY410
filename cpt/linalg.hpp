@@ -108,17 +108,17 @@ namespace cpt
 
     // FFT Routines
 
-    extern void fft(Matrix<std::complex<double>,1>&,
+    void fft(Matrix<std::complex<double>,1>&,
                     const bool inverse=false);
     inline void fft_inv(Matrix<std::complex<double>,1>& v) { fft(v, true); }
 
-    extern void fft(Matrix<std::complex<double>,2>&,
+    void fft(Matrix<std::complex<double>,2>&,
                     const bool inverse=false);
     inline void fft_inv(Matrix<std::complex<double>,2>& m) { fft(m, true); }
 
     // Least Squares and Chi-Square Fits
 
-    extern void least_squares_fit(      // makes a linear least-squares fit
+    void least_squares_fit(      // makes a linear least-squares fit
         const Matrix<double,1>& x,      // vector of x values - input
         const Matrix<double,1>& y,      // vector of y values - input
         double& a,                      // fitted intercept - output
@@ -127,7 +127,7 @@ namespace cpt
         double& sigma_b,                // estimated error in slope - output
         double& sigma);                 // estimated error bar in y
 
-    extern void chi_square_fit(         // makes a linear chi-square fit
+    void chi_square_fit(         // makes a linear chi-square fit
         const Matrix<double,1>& x,      // vector of x values - input
         const Matrix<double,1>& y,      // vector of y values - input
         const Matrix<double,1>& err,    // vector of y error values - input
