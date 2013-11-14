@@ -12,46 +12,6 @@ using namespace std;
 namespace cpt {
 
 
-//      class RootFinder functions
-
-void RootFinder::set_first_root_estimate(double x_guess)
-{
-        x0 = x_guess;
-}
-
-void RootFinder::set_step_estimate(double step_size)
-{
-        dx = step_size;
-        x1 = x0 + dx;
-}
-
-void RootFinder::set_second_root_estimate(double x_guess)
-{
-        x1 = x_guess;
-        dx = x1 - x0;
-}
-
-
-void RootFinder::set_accuracy(double epsilon)
-{
-        if ( epsilon > 1e-38 )
-                accuracy = epsilon;
-        else {
-                cerr << " RootFinder: you have requested a ridiculous"
-                        << " accuracy: " << accuracy << " !!!" << endl;
-        }
-}
-
-void RootFinder::set_max_steps(int steps)
-{
-        if ( steps > 0 )
-                max_steps = steps;
-        else {
-                cerr << " RootFinder: you have requested a ridiculous"
-                        << " number of steps: " << steps << " !!!" << endl;
-        }
-}
-
 // FFT class
 
   FFT::FFT() {

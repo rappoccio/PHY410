@@ -175,21 +175,40 @@ static void printWarning(int max_steps)
       os = &std::cout;        // pointer to print stream
     }
 
-    void set_first_root_estimate(
-      double x_guess
-    );
 
-    void set_step_estimate
-      (double step_size
-    );
 
-    void set_second_root_estimate(
-      double x_guess
-    );
+    //      class RootFinder functions
 
-    void set_accuracy(
-      double epsilon
-    );
+    void set_first_root_estimate(double x_guess)
+    {
+      x0 = x_guess;
+    }
+
+    void set_step_estimate(double step_size)
+    {
+      dx = step_size;
+      x1 = x0 + dx;
+    }
+
+    void set_second_root_estimate(double x_guess)
+    {
+      x1 = x_guess;
+      dx = x1 - x0;
+    }
+
+
+    void set_accuracy(double epsilon)
+    {
+	accuracy = epsilon;
+    }
+
+    void set_max_steps(int steps)
+    {
+      if ( steps > 0 )
+	max_steps = steps;
+      else
+	max_steps = 1;
+    }
 
     double get_accuracy() {
       return accuracy;
@@ -198,10 +217,6 @@ static void printWarning(int max_steps)
     int get_steps() {
       return steps;
     }
-
-    void set_max_steps(
-      int steps
-    );
 
     int get_max_steps() {
       return max_steps;
