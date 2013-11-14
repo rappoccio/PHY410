@@ -3,16 +3,18 @@
 CC=g++
 # Hey!, I am comment number 2. I want to say that CFLAGS will be the
 # options I'll pass to the compiler.
-CFLAGS=-c -Wall
-LDFLAGS=-I$(INCLUDEPATH) -L$(LD_LIBRARY_PATH) -lcpt
+LIBS=-I$(INCLUDEPATH) -L$(LD_LIBRARY_PATH) -lcpt
 
-all: poisson poisson_fft
 
-$(SRC): $(SRC).o
-	$(CC) $(LDFLAGS) $(SRC).o -o $(SRC)
+all: poisson_fft poisson
 
-$(SRC).o: $(SRC).cpp
-	$(CC) $(CFLAGS)  $(LDFLAGS) $(SRC).cpp
+poisson: poisson.cpp
+	$(CC) $^  $(LIBS) -o poisson
+
+poisson_fft: poisson_fft.cpp
+	$(CC) $^  $(LIBS) -o poisson_fft
+
 
 clean:
-	rm -rf *o poisson poisson_fft *.pyc *.data
+	rm -rf *o poisson poisson_fft
+

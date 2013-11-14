@@ -1,5 +1,6 @@
 #include "cptstd.hpp"
 #include "linalg.hpp"
+#include "basalg.hpp"
 using namespace cpt;
 
 int main() {
@@ -31,19 +32,21 @@ int main() {
     }
 
     // FFT rows of rho
-    Matrix<complex<double>,1> f(N);      // to store rows and columns
+    FFT fft;
+    std::vector<std::complex<double> > f(N);      // to store rows and columns
     for (int j = 0; j < N; j++) {
         for (int k = 0; k < N; k++)
             f[k] = rho[j][k];
-        fft(f);
+        fft.transform(f);
         for (int k = 0; k < N; k++)
             rho[j][k] = f[k];
     }
+
     // FFT columns of rho
     for (int k = 0; k < N; k++) {
         for (int j = 0; j < N; j++)
             f[j] = rho[j][k];
-        fft(f);
+        fft.transform(f);
         for (int j = 0; j < N; j++)
             rho[j][k] = f[j];
     }
@@ -69,7 +72,7 @@ int main() {
     for (int j = 0; j < N; j++) {
         for (int k = 0; k < N; k++)
             f[k] = V[j][k];
-        fft_inv(f);
+        fft.inverse_transform(f);
         for (int k = 0; k < N; k++)
             V[j][k] = f[k];
     }
@@ -77,7 +80,7 @@ int main() {
     for (int k = 0; k < N; k++) {
         for (int j = 0; j < N; j++)
             f[j] = V[j][k];
-        fft_inv(f);
+        fft.inverse_transform(f);
         for (int j = 0; j < N; j++)
             V[j][k] = f[j];
     }
