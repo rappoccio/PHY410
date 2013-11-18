@@ -155,7 +155,12 @@ class Animator :
         self.draw.pack(side=TOP)
 
     def animate(self) :
-        self.ani = animation.FuncAnimation( self.fig, self.update,   self.time_step, interval=50, blit=False )
+        self.ani = animation.FuncAnimation( self.fig,        # Animate our figure
+                                            self.update,     # Update function draws our data
+                                            self.time_step,  # "frames" function does the time step, each iteration
+                                            interval=50,     # 50 ms between iterations
+                                            blit=False       # don't blit anything
+                                            )
 
 
 wavepacketFFT = WavepacketFFT(N=600)
