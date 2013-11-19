@@ -163,7 +163,7 @@ class Animator :
                                             )
 
 
-wavepacketFFT = WavepacketFFT(N=600)
+wavepacketFFT = WavepacketFFT(N=128)
 animator = Animator(periodic=True,wavepacketFFT=wavepacketFFT)
 animator.animate()
 plt.show()

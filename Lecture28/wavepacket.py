@@ -182,7 +182,7 @@ class Animator :
                                             )
 
 
-wavepacket = Wavepacket(N=600)
+wavepacket = Wavepacket(N=128)
 animator = Animator(periodic=True,wavepacket=wavepacket)
 animator.animate()
 plt.show()
