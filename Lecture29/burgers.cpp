@@ -1,364 +1,225 @@
 #include "cptstd.hpp"
-#include "graphics.hpp"
-#include "linalg.hpp"
+#include "matrix.hpp"
 using namespace cpt;
 
-#ifdef __APPLE__
-#  include <GLUT/glut.h>
-#else
-#  include <GL/glut.h>
-#endif
+#include <cstdio>
 
-const double pi = 4 * atan(1.0);
 
-double L = 1;                       // size of periodic region
-int N = 200;                        // number of grid points
-double h;                           // lattice spacing
-double t;                           // time
-double uMax;                        // maximum wave amplitude
-double tau;                         // time step
-double CFLRatio = 1;                // Courant-Friedrichs-Lewy ratio tau/h
-enum {SINE, STEP};
-int initialWaveform = SINE;         // sine function, step, etc.
+class Burgers {
 
-double nu = 1e-6;                   // kinematic viscosity
-Matrix<double,1> u, uNew;           // the solution and its update
-Matrix<double,1> F;                 // the flow
-Matrix<double,1> uPlus, uMinus;     // for Godunov scheme
-int step;                           // integration step number
+public : 
 
-void initialize()
-{
-    u = Matrix<double,1>(N);
-    uNew = Matrix<double,1>(N);
-    F = Matrix<double,1>(N);
-    uPlus = Matrix<double,1>(N);
-    uMinus = Matrix<double,1>(N);
+  enum {SINE, STEP};
+  enum Method { M_FTCS, M_LAX, M_LAX_WENDROFF, M_GODUNOV };
+
+  Burgers( Method imethod = M_FTCS, int iN=500, double iL=1.0, double iCFL=1.0, int init_form=SINE ) :
+    method(imethod),
+    N(iN), L(iL), CFLRatio(iCFL), u(iN), uNew(iN), F(iN), 
+    uPlus(iN), uMinus(iN)
+  {
+
+    initialWaveform = init_form;         // sine function, step, etc.
+    
+    nu = 1e-6;                   // kinematic viscosity
+
 
     h = L / N;
 
     for (int i = 0; i < N; i++) {
-        double x = i * h;
-        switch (initialWaveform) {
-        case SINE:
-            u[i] = sin(2 * pi * x) + 0.5 * sin(pi * x);
+      double x = i * h;
+      switch (initialWaveform) {
+      case SINE:
+	u[i] = sin(2 * pi * x) + 0.5 * sin(pi * x);
         break;
-        case STEP:
-            u[i] = 0;
-            if (x > L / 4 && x < 3 * L / 4)
-                u[i] = 1;
-            break;
-        default:
-            u[i] = 1;
-            break;
-        }
-        if (abs(u[i]) > uMax)
-            uMax = abs(u[i]);
+      case STEP:
+	u[i] = 0;
+	if (x > L / 4 && x < 3 * L / 4)
+	  u[i] = 1;
+	break;
+      default:
+	u[i] = 1;
+	break;
+      }
+      if (std::abs(u[i]) > uMax)
+	uMax = std::abs(u[i]);
     }
 
-    tau = CFLRatio * h / uMax;
+    dt = CFLRatio * h / uMax;
     t = 0;
     step = 0;
-}
+  }
 
-void (*integrationAlgorithm)();
-void redraw();
+  void take_step()
+  {
+    double t0 = t;
+    switch ( method ) {
+    case M_FTCS : 
+      FTCS();
+      break;
+    case M_LAX : 
+      Lax();
+      break;
+    case M_LAX_WENDROFF :
+      LaxWendroff();
+      break;
+    case M_GODUNOV : default: 
+      Godunov();
+      break;
+    };
+    u = uNew;
+    t += dt;
+    ++step;
+  }
 
-double T = 5;                   // time to cross screen
-double framesPerSec = 50;       // animation rate for screen redraws
-
-void takeStep()
-{
-    static clock_t clockStart;
-    static bool done;
-    if (!done) {
-        double t0 = t;
-        do {
-            integrationAlgorithm();
-            u = uNew;
-            t += tau;
-            ++step;
-        } while (abs(uMax * (t - t0)) < L / T / framesPerSec);
-        done = true;
-    }
-    clock_t clockNow = clock();
-    double seconds = (clockNow - clockStart) / double(CLOCKS_PER_SEC);
-    if ( seconds < 1 / framesPerSec ) {
-        return;
-    } else {
-        clockStart = clockNow;
-        done = false;
-    }
-    redraw();
-}
-
-void FTCS()
-{
+  void FTCS()
+  {
     for (int j = 0; j < N; j++) {
-        int jNext = j < N - 1 ? j + 1 : 0;
-        int jPrev = j > 0 ? j - 1 : N - 1;
-        uNew[j] = u[j] * (1 - tau / (2 * h) * (u[jNext] - u[jPrev])) +
-                  nu * tau / h / h * (u[jNext] + u[jPrev] - 2 * u[j]);
+      int jNext = j < N - 1 ? j + 1 : 0;
+      int jPrev = j > 0 ? j - 1 : N - 1;
+      uNew[j] = u[j] * (1 - dt / (2 * h) * (u[jNext] - u[jPrev])) +
+	nu * dt / h / h * (u[jNext] + u[jPrev] - 2 * u[j]);
     }
-}
+  }
 
-void Lax()
-{
+  void Lax()
+  {
     for (int j = 0; j < N; j++) {
-        int jNext = j < N - 1 ? j + 1 : 0;
-        int jPrev = j > 0 ? j - 1 : N - 1;
-        uNew[j] = (u[jNext] + u[jPrev]) / 2
-                  - u[j] * tau / (2 * h) * (u[jNext] - u[jPrev])
-                  + nu * tau / h / h * (u[jNext] + u[jPrev] - 2 * u[j]);
+      int jNext = j < N - 1 ? j + 1 : 0;
+      int jPrev = j > 0 ? j - 1 : N - 1;
+      uNew[j] = (u[jNext] + u[jPrev]) / 2
+	- u[j] * dt / (2 * h) * (u[jNext] - u[jPrev])
+	+ nu * dt / h / h * (u[jNext] + u[jPrev] - 2 * u[j]);
     }
-}
+  }
 
-void LaxWendroff()
-{
+  void LaxWendroff()
+  {
     for (int j = 0; j < N; j++)
-        F[j] = u[j] * u[j] / 2;
+      F[j] = u[j] * u[j] / 2;
     for (int j = 0; j < N; j++) {
-        int jMinus1 = j > 0 ? j - 1 : N - 1;
-        int jPlus1 = j < N - 1 ? j + 1 : 0;
-        int jPlus2 = jPlus1 < N - 1 ? jPlus1 + 1 : 0;
-        uNew[j] = (u[j] + u[jPlus1]) / 2 -
-                  (tau / 2 / h) * (F[jPlus1] - F[j]) +
-                  (nu * tau / (2 * h * h)) * (
-                      (u[jPlus1] + u[jMinus1] - 2 * u[j]) / 2 +
-                      (u[jPlus2] + u[j] - 2 * u[jPlus1]) / 2 );
+      int jMinus1 = j > 0 ? j - 1 : N - 1;
+      int jPlus1 = j < N - 1 ? j + 1 : 0;
+      int jPlus2 = jPlus1 < N - 1 ? jPlus1 + 1 : 0;
+      uNew[j] = (u[j] + u[jPlus1]) / 2 -
+	(dt / 2 / h) * (F[jPlus1] - F[j]) +
+	(nu * dt / (2 * h * h)) * (
+				    (u[jPlus1] + u[jMinus1] - 2 * u[j]) / 2 +
+				    (u[jPlus2] + u[j] - 2 * u[jPlus1]) / 2 );
     }
     for (int j = 0; j < N; j++)
-        F[j] = uNew[j] * uNew[j] / 2;
+      F[j] = uNew[j] * uNew[j] / 2;
     for (int j = 0; j < N; j++) {
-        int jMinus1 = j > 0 ? j - 1 : N - 1;
-        int jPlus1 = j < N - 1 ? j + 1 : 0;
-        uNew[j] = u[j] - (tau / h) * (F[j] - F[jMinus1]) +
-                  (nu * tau / (h * h)) * (u[jPlus1] + u[jMinus1] - 2 * u[j]);
+      int jMinus1 = j > 0 ? j - 1 : N - 1;
+      int jPlus1 = j < N - 1 ? j + 1 : 0;
+      uNew[j] = u[j] - (dt / h) * (F[j] - F[jMinus1]) +
+	(nu * dt / (h * h)) * (u[jPlus1] + u[jMinus1] - 2 * u[j]);
     }
-}
+  }
 
-void Godunov()
-{
+  void Godunov()
+  {
     for (int j = 0; j < N; j++) {
-        uPlus[j] = u[j] > 0 ? u[j] : 0;
-        uMinus[j] = u[j] < 0 ? u[j] : 0;
+      uPlus[j] = u[j] > 0 ? u[j] : 0;
+      uMinus[j] = u[j] < 0 ? u[j] : 0;
     }
     for (int j = 0; j < N; j++) {
-        int jNext = j < N - 1 ? j + 1 : 0;
-        int jPrev = j > 0 ? j - 1 : N - 1;
-        double f1 = uPlus[jPrev] * uPlus[jPrev] / 2;
-        double f2 = uMinus[j] * uMinus[j] / 2;
-        F[jPrev] = f1 > f2 ? f1 : f2;
-        f1 = uPlus[j] * uPlus[j] / 2;
-        f2 = uMinus[jNext] * uMinus[jNext] / 2;
-        F[j] = f1 > f2 ? f1 : f2;
-        uNew[j] = u[j]  + nu * tau / h / h * (u[jNext] + u[jPrev] - 2 * u[j]);
-        uNew[j] -= (tau / h) * (F[j] - F[jPrev]);
+      int jNext = j < N - 1 ? j + 1 : 0;
+      int jPrev = j > 0 ? j - 1 : N - 1;
+      double f1 = uPlus[jPrev] * uPlus[jPrev] / 2;
+      double f2 = uMinus[j] * uMinus[j] / 2;
+      F[jPrev] = f1 > f2 ? f1 : f2;
+      f1 = uPlus[j] * uPlus[j] / 2;
+      f2 = uMinus[jNext] * uMinus[jNext] / 2;
+      F[j] = f1 > f2 ? f1 : f2;
+      uNew[j] = u[j]  + nu * dt / h / h * (u[jNext] + u[jPrev] - 2 * u[j]);
+      uNew[j] -= (dt / h) * (F[j] - F[jPrev]);
     }
-}
+  }
 
-int mainWindow, solutionWindow, controlWindow;
-int margin = 10;
-int controlHeight = 30;
 
-void reshape(int w, int h)
+  double get_L() const { return L; }
+  double get_t() const { return t; }
+  int    get_N() const { return N; }
+  double get_u(int i) const { return u[i]; }
+  double get_dt() const{ return dt; }
+  void inc_t( double dt) { t += dt; }
+
+protected : 
+  static const double pi;
+
+  Method method;                      // FTCS, Lax, Lax_Wendroff
+  double L;                           // size of periodic region
+  int N ;                             // number of grid points
+  double h;                           // lattice spacing
+  double t;                           // time
+  double uMax;                        // maximum wave amplitude
+  double dt;                          // time step
+  double CFLRatio;                    // Courant-Friedrichs-Lewy ratio tau/h
+  int initialWaveform ;               // sine function, step, etc.
+
+  double nu;                          // kinematic viscosity
+  Matrix<double,1> u, uNew;           // the solution and its update
+  Matrix<double,1> F;                 // the flow
+  Matrix<double,1> uPlus, uMinus;     // for Godunov scheme
+  int step;                           // integration step number
+
+
+
+
+};
+
+const double Burgers::pi = 4 * atan(1.0);
+
+int main()
 {
-    glViewport(0, 0, w, h);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(0, w, 0, h);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-}
+  cout << " Finite Difference solution of the Burgers Equation\n"
+       << " Choose a numerical method: 0) FTCS, 1) Lax, 2) Lax-Wendroff, 3) Godunov : ";
+  int method, N;
+  cin >> method;
+  cout << " Enter number of grid cells: ";
+  cin >> N;
+  double L;
+  cout << " Enter L: ";
+  cin >> L;
 
-void redraw()
-{
-    glutSetWindow(solutionWindow);
-    glutPostRedisplay();
-}
+  Burgers burgers( static_cast<Burgers::Method>(method), N, L );
 
-void display()
-{
-    glClear(GL_COLOR_BUFFER_BIT);
 
-    glutSwapBuffers();
-}
+#ifdef _WIN32
+  ostringstream pyout;
+  pyout << "env python.exe animator_for_cpp.py " << N;
+  FILE *pypipe = _popen(pyout.str().c_str(), "w");
+#else
+  ostringstream pyout;
+  pyout << "/usr/bin/env python animator_for_cpp.py " << N;
+  FILE *pypipe = popen(pyout.str().c_str(), "w");
+#endif
 
-void drawText(const string& str, double x, double y)
-{
-    glRasterPos2d(x, y);
-    int len = str.find('\0');
-    for (int i = 0; i < len; i++)
-       glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, str[i]);
-}
 
-void displaySolution()
-{
-    glClear(GL_COLOR_BUFFER_BIT);
-    glColor3ub(255, 255, 255);
-    glBegin(GL_LINE_STRIP);
-        for (int i = 0; i < N; i++) {
-            int iNext = i < N - 1 ? i + 1 : 0;
-            glVertex2d(i * h, u[i]);
-            glVertex2d((i + 1) * h, u[iNext]);
-        }
-    glEnd();
+  // simple Mpl pipes animation
+  cout << " Enter animation time: ";
+  double t_max;
+  cin >> t_max;
+  double frame_rate = 30;
+  double dt_frame = 1 / frame_rate;
+  int steps_per_frame = max(1, int(dt_frame /   burgers.get_dt()));
+
+  while (burgers.get_t() < t_max) {
     ostringstream os;
-    os << "CFL Ratio = " << CFLRatio << "    nu = " << nu
-       << "    t = " << step * tau << ends;
-    drawText(os.str(), 0.02, -0.95);
-    glutSwapBuffers();
-}
-
-void (*method[])() = {FTCS, Lax, LaxWendroff, Godunov};
-char methodName[][20] = {"FTCS", "Lax", "Lax Wendroff", "Godunov"};
-
-void displayControl()
-{
-    glClear(GL_COLOR_BUFFER_BIT);
-    int w = glutGet(GLUT_WINDOW_WIDTH);
-    int h = glutGet(GLUT_WINDOW_HEIGHT);
-    for (int i = 0; i < 4; i++) {
-        if (method[i] == integrationAlgorithm)
-            glColor3ub(255, 0, 0);
-        else
-            glColor3ub(0, 0, 255);
-        glRectd((i + 0.025) * w / 4, 0.1 * h, (i + 0.975) * w / 4, 0.9 * h);
-        glColor3ub(255, 255, 255);
-        ostringstream os;
-        os << methodName[i] << ends;
-        drawText(os.str(), (i + 0.2) * w / 4, 0.3 * h);
+    for (int i = 0; i < N; i++)
+      os << burgers.get_u(i) << ',';
+    fprintf(pypipe, "%s\n", os.str().c_str());
+    fflush(pypipe);
+    time_t start_time = clock();
+    for (int step = 0; step < steps_per_frame; step++) {
+      burgers.take_step();
+      burgers.inc_t( dt_frame );
     }
-    glutSwapBuffers();
-}
-
-void reshapeMain(int w, int h)
-{
-    reshape(w, h);
-
-    glutSetWindow(solutionWindow);
-    glutPositionWindow(margin, margin);
-    glutReshapeWindow(w - 2 * margin, h - 3 * margin - controlHeight);
-
-    glutSetWindow(controlWindow);
-    glutPositionWindow(margin, h - margin - controlHeight);
-    glutReshapeWindow(w - 2 * margin, controlHeight);
-}
-
-void reshapeSolution(int w, int h)
-{
-    glViewport(0, 0, w, h);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(0, 1, -1, +1.5);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-}
-
-void mouseSolution(int button, int state, int x, int y)
-{
-   static bool running = false;
-
-    switch (button) {
-    case GLUT_LEFT_BUTTON:
-        if (state == GLUT_DOWN) {
-            if (running) {
-                glutIdleFunc(NULL);
-                running = false;
-            } else {
-                glutIdleFunc(takeStep);
-                running = true;
-            }
-        }
-        break;
-    default:
-        break;
+    while (true) {
+      double secs = (clock() - start_time) / double(CLOCKS_PER_SEC);
+      if (secs > dt_frame)
+	break;
     }
-}
-
-void mouseControl(int button, int state, int x, int y)
-{
-    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-        int w = glutGet(GLUT_WINDOW_WIDTH);
-        int algorithm = int(x / double(w) * 4);
-        if (algorithm >= 0 && algorithm < 4)
-            integrationAlgorithm = method[algorithm];
-        glutPostRedisplay();
-    }
-}
-
-void makeMainWindow() {
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    glutInitWindowSize(600, 400);
-    glutInitWindowPosition(100, 100);
-    mainWindow = glutCreateWindow("One-dimensional Burgers' Equation");
-    glClearColor(1.0, 1.0, 1.0, 0.0);
-    glShadeModel(GL_FLAT);
-    glutDisplayFunc(display);
-    glutReshapeFunc(reshapeMain);
-}
-
-void solutionMenu(int menuItem)
-{
-    switch (menuItem) {
-    case 1:
-        initialWaveform = SINE;
-        break;
-    case 2:
-        initialWaveform = STEP;
-        break;
-    default:
-        break;
-    }
-    initialize();
-    glutPostRedisplay();
-}
-
-void makeSolutionWindow()
-{
-    glutSetWindow(mainWindow);
-    int w = glutGet(GLUT_WINDOW_WIDTH);
-    int h = glutGet(GLUT_WINDOW_HEIGHT);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    solutionWindow = glutCreateSubWindow(mainWindow, margin, margin,
-                     w - 2 * margin, h - 3 * margin - controlHeight);
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    glShadeModel(GL_FLAT);
-    glutDisplayFunc(displaySolution);
-    glutReshapeFunc(reshapeSolution);
-    glutMouseFunc(mouseSolution);
-    integrationAlgorithm = Lax;
-    glutCreateMenu(solutionMenu);
-    glutAddMenuEntry("Initial Sine Waveform", 1);
-    glutAddMenuEntry("Initial Step Waveform", 2);
-    glutAttachMenu(GLUT_RIGHT_BUTTON);
-}
-
-void makeControlWindow() {
-    glutSetWindow(mainWindow);
-    int w = glutGet(GLUT_WINDOW_WIDTH);
-    int h = glutGet(GLUT_WINDOW_HEIGHT);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    controlWindow = glutCreateSubWindow(mainWindow,
-                      margin, h - margin - controlHeight,
-                      w - 2 * margin, controlHeight);
-    glClearColor(0.0, 1.0, 0.0, 0.0);
-    glShadeModel(GL_FLAT);
-    glutDisplayFunc(displayControl);
-    glutReshapeFunc(reshape);
-    glutMouseFunc(mouseControl);
-}
-
-int main(int argc, char *argv[])
-{
-    glutInit(&argc, argv);
-    if (argc > 1)
-        CFLRatio = atof(argv[1]);
-    if (argc > 2)
-        nu = atof(argv[2]);
-    initialize();
-    makeMainWindow();
-    makeSolutionWindow();
-    makeControlWindow();
-    glutMainLoop();
+  }
+  fclose(pypipe);
 }

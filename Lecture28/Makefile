@@ -6,7 +6,7 @@ CC=g++
 LIBS=-I$(INCLUDEPATH) -L$(LD_LIBRARY_PATH) -lcpt
 
 
-all: wavepacket_fft wavepacket
+all: wavepacket wavepacket_fft
 
 wavepacket_fft: wavepacket_fft.cpp
 	$(CC) $^  $(LIBS) -o wavepacket_fft
