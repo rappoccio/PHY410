@@ -53,11 +53,15 @@ protected :
 
 };
 
-int main() {
 
 
-  cout << " Quantum Wavepacket Motion" << endl;
+int main()
+{
+
+
+  cout << " Quantum Wavepacket Motion via FFT" << endl;
   WavepacketFFT wavepacket;
+  cout << "Got a wavepacket" << endl;
 
   ofstream file("potential.data");
   for (int i = 0; i < wavepacket.get_N(); i++)
@@ -65,9 +69,23 @@ int main() {
   file.close();
   cout << " saved V(x) in file potential.data" << endl;
 
+
+
+#ifdef _WIN32
+  ostringstream pyout;
+  pyout << "env python.exe animator_for_cpp.py " << wavepacket.get_N();
+  FILE *pypipe = _popen(pyout.str().c_str(), "w");
+#else
+  ostringstream pyout;
+  pyout << "/usr/bin/env python animator_for_cpp.py " << wavepacket.get_N();
+  FILE *pypipe = popen(pyout.str().c_str(), "w");
+#endif
+
+
   wavepacket.save_psi(0);
   int plots = 10;
   for (int plot = 1; plot <= plots; plot++) {
+    cout << "plot = " << plot << endl;
     double delta_t = 0;
     while (delta_t < wavepacket.get_L() / (plots * wavepacket.get_velocity())) {
       wavepacket.take_step();
@@ -76,21 +94,32 @@ int main() {
     wavepacket.save_psi(plot);
   }
 
-  // simple gnuplot animation
-  int plot = 0;
-  while (true) {
-    fprintf(gnupipe, "set term %s\n", terminal.c_str());
-    fprintf(gnupipe, "plot \"psi_%d.data\" w l\n", plot);
-    plot = (plot+1) % (plots+1);
-    fflush(gnupipe);
+  
+  // simple Mpl pipes animation
+  cout << " Enter animation time: ";
+  double t_max;
+  cin >> t_max;
+  wavepacket = WavepacketFFT();
+  double frame_rate = 30;
+  double dt_frame = 1 / frame_rate;
+  int steps_per_frame = max(1, int(dt_frame /   wavepacket.get_dt()));
+
+  while (wavepacket.get_t() < t_max) {
+    ostringstream os;
+    for (int i = 0; i < wavepacket.get_N(); i++)
+      os << std::abs(wavepacket.get_psi()[i]) << ',';
+    fprintf(pypipe, "%s\n", os.str().c_str());
+    fflush(pypipe);
     time_t start_time = clock();
+    for (int step = 0; step < steps_per_frame; step++) {
+      wavepacket.take_step();
+    }
     while (true) {
       double secs = (clock() - start_time) / double(CLOCKS_PER_SEC);
-      if (secs > 0.5)
+      if (secs > dt_frame)
 	break;
     }
   }
-
-
-
+  fclose(pypipe);
 }
+

@@ -83,6 +83,10 @@ public :
   double get_L()          const { return L;}
   double get_velocity()   const { return velocity;}
   double get_dt()         const { return dt;}
+  double get_t()          const { return t;}
+  Matrix<complex<double>,1> get_psi() const { return psi; } 
+  
+  void inc_t() { t += dt; }
 
 protected : 
 
@@ -120,19 +124,6 @@ protected :
   double t;                     // time
 
 };
-
-
-  // definitions for simple Gnuplot animation
-#include <cstdio>
-#ifdef _WIN32
-  string gnuplot = "env pgnuplot.exe -persist ";
-  string terminal = "windows";
-  FILE *gnupipe = _popen(gnuplot.c_str(), "w");
-#else
-  string gnuplot = "/usr/bin/env gnuplot -persist ";
-  string terminal = "x11";
-  FILE *gnupipe = popen(gnuplot.c_str(), "w");
-#endif
 
 
 const double WavepacketBase::pi = 4 * atan(1.0);
