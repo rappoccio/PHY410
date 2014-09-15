@@ -33,16 +33,17 @@ for line in lines:
 print " read", len(data), "values from", file_name
 
 
-transform = sine_transform(data)
+transform_raw = sine_transform(data)
+abs_transform = [ abs(x) for x in transform_raw]
 
-freqs = [ float(i) for i in xrange(len(transform))]
+freqs = [ float(i) for i in xrange(len(transform_raw))]
 
 
 plt.subplot(2, 1, 1)
 plt.plot( dates, data )
 
 ax = plt.subplot(2, 1, 2)
-plt.plot( freqs, transform )
+plt.plot( freqs, abs_transform )
 ax.set_yscale('log')
 
 plt.show()
