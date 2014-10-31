@@ -65,7 +65,8 @@ def main () :
     omega = omega*pi/180.0
     gamma = input( "Enter damping coefficient : " )
     F_D = input( "Enter driving amplitude : ")
-    omega_D = input( "Enter driving frequency : " )
+    omega_D = input( "Enter driving frequency (degrees/s) : " )
+    omega_D = omega_D*pi/180.0
 
     #* Set the physical constants and other variables
     L = PendulumDiffEq.g  # The constant g/L

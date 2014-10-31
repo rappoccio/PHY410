@@ -89,8 +89,9 @@ int main() {
   double gamma; cin >> gamma;
   cout << "Enter driving amplitude : ";
   double F_D; cin >> F_D;
-  cout << "Enter driving frequency : ";
+  cout << "Enter driving frequency (degrees/s): ";
   double omega_D; cin >> omega_D;
+  omega_D = omega_D*pi/180.0;
 
   //* Set the physical constants and other variables
   double L = PendulumDiffEq::g;  // The constant g/L
