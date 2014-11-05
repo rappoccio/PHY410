@@ -45,7 +45,7 @@ class ParticleInBoxWavefunction( ParticleInBox ) :
 
 print " Bound state energies of infinitely deep potential well"
 print " ------------------------------------------------------"
-E0, E1, accuracy = input(" Enter guess E_0, dE, and desired accuracy: ")
+E0, E1, accuracy = input(" Enter guess E_0, E_1, and desired accuracy: ")
 particlePsi = ParticleInBoxWavefunction( E0, accuracy )
 E = cpt.root_bisection(particlePsi, E0, E1, particlePsi.accuracy, 1000, True)
 print " Eigenvalue =", E
