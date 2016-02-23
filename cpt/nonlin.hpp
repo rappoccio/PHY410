@@ -111,7 +111,7 @@ double golden(const double ax, const double bx, const double cx,
 
     x0=ax;
     x3=cx;
-    if (abs(cx-bx) > abs(bx-ax)) {
+    if ( std::abs(cx-bx) >  std::abs(bx-ax)) {
         x1=bx;
         x2=bx+C*(cx-bx);
     } else {
@@ -120,7 +120,7 @@ double golden(const double ax, const double bx, const double cx,
     }
     f1=f(x1)*sign;
     f2=f(x2)*sign;
-    while (abs(x3-x0) > tol*(abs(x1)+abs(x2))) {
+    while ( std::abs(x3-x0) > tol*( std::abs(x1)+ std::abs(x2))) {
         if (f2 < f1) {
             shft3(x0,x1,x2,R*x2+C*x3);
             shft2(f1,f2,f(x2)*sign);
