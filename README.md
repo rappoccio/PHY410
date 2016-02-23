@@ -20,12 +20,13 @@ This also includes software from the following sources :
 The examples are typically provided in both python and C++ with
 a few exceptions. These have been tested with :
  - Mac OS 10.8 : python 2.7.2 and GCC 4.7.3_0.
+   Mac OS 10.10: python 2.7.9 and clang-700.1.81 (g++ points to this now) 
  - Windows 7 + cygwin : python 2.7.5 and GCC 4.8.1
  - Ubuntu 12.04 LTS : python 2.7.3 and GCC 4.6.3
 
 Additional installation instructions : 
- - Mac OS 10.8 :
-    > Install XCode from the App Store
+ - Mac OS >= 10.8 :
+    > Install XCode from the App Store, enable command line tools (xcode-select --install)
  - Windows 7 + cygwin
     > During installation, change the "Interpreters" 
       and "Devel" installations from "Default" to "Install". 
