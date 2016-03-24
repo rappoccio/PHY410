@@ -3,7 +3,7 @@
 CC=g++
 # Hey!, I am comment number 2. I want to say that CFLAGS will be the
 # options I'll pass to the compiler.
-LIBS=-I$(INCLUDEPATH) -L$(LD_LIBRARY_PATH) -lcpt
+LIBS=-I$(CPT_PATH) -L$(CPT_PATH) -lcpt
 
 
 all: triatomic matrixmult
