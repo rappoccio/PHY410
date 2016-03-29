@@ -95,3 +95,60 @@ gnuplot :
 All :
 
 http://gnuplot.sourceforge.net
+
+
+
+
+To Compile and Run
+==================
+**Compile the library**
+```
+cd PHY410
+source setup.csh (or setup.sh for bash)
+cd cpt
+make
+```
+
+**Compile and run the executables**
+```
+cd $CPT_PATH/LectureXXX
+make
+./program_name 
+```
+*Example:*
+```
+cd $CPT_PATH/Lecture14
+make
+./wheatstone
+```
+
+
+
+
+"Advanced" topics
+=================
+
+**If you want to make new executable file called "filename.cpp", edit the Makefile:**
+   - add your new exe name "filename" to the "all" target list
+   - make a "rule" for your "filename" executable
+   - add your new exe name "filename" to the "clean" string
+Example:
+```
+filename: filename.cpp
+	$(CC) $^  $(LIBS) -o filename
+```
+
+**If you broke something, to revert your git repository:**
+```
+git checkout -- . 
+```
+
+**If you want to compile *EVERYTHING* at once, go to PHY410 directory, do NOT cd to any Lecture, and type "make"**
+
+```
+cd PHY410
+source setup.csh (or setup.sh for bash)
+make
+```
+
+
