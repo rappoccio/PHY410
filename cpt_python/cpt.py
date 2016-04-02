@@ -8,6 +8,13 @@ import sys
 import copy
 import scipy.optimize
 
+from cmath import exp, pi
+from math import sin, cos
+import matplotlib.pyplot as plt
+
+from numpy import array, conj, divide
+
+
 def dft(data, inverse=False):
     """Return Discrete Fourier Transform (DFT) of a complex data vector"""
     N = len(data)
@@ -94,6 +101,28 @@ def cosine_fft(data, inverse=False):
         if inverse:
             cosineft[k] *= 2.0 / N
     return cosineft
+
+
+
+
+
+def ifft(x) :
+    # conjugate the complex numbers
+    x = conj(x)
+ 
+    # forward fft
+    X = fft( x );
+ 
+    # conjugate the complex numbers again
+    X = conj(X)
+ 
+    # scale the numbers
+    X = divide(X, len(X))
+
+    return X
+    
+
+
 
 # Define an alias for compatibility with C++
 
