@@ -120,8 +120,11 @@ const double Kepler::G_m1_plus_m2 = 4 * pi * pi;
 
 int main()
 {
-  cout << " Kepler orbit using fixed and then adaptive Runge-Kutta\n"
-       << " Enter aphelion distance in AU: ";
+  int useAdaptive = 0;
+  cout << " Kepler orbit using fixed and then adaptive Runge-Kutta" << endl;
+  cout << " Choose RK4 (0) or adaptive RK4(1)" << endl;
+  cin >> useAdaptive;
+  cout << " Enter aphelion distance in AU: ";
   double r_aphelion, eccentricity, dt, accuracy;
   cin >> r_aphelion;
   cout << " Enter eccentricity: ";
@@ -141,7 +144,6 @@ int main()
 
   Matrix<double,1> trv(5);
   trv[0] = 0; trv[1] = r_aphelion; trv[2] = 0; trv[3] = 0; trv[4] = vy0;
-  kepler.integrate(trv, dt, T, accuracy, false);
-  trv[0] = 0; trv[1] = r_aphelion; trv[2] = 0; trv[3] = 0; trv[4] = vy0;
-  kepler.integrate(trv, dt, T, accuracy, true);
+  kepler.integrate(trv, dt, T, accuracy, useAdaptive);
+
 }
