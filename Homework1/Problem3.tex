@@ -7,9 +7,8 @@
 \date{}
 \maketitle
 
-\noindent Since $f_0=2, f_n=f_{n-1}^2$, we have $f_1=4, f_2=16, \cdots, f_n=2^{2^{n-1}}$. Then we can calculate the maximum value for different data types.\\
-a)For int, the maximum value it can store is $32767=2^15-1<2^{2^4}$, so the maximum value for $f_n$ is $f_4=2^{2^3}$ which means the maximum $n$ is $n=4$.\\
-b)For long int, the maximum value it can store is $2147483647=2^31-1<2^{2^5}$, so the maximum value for $f_n$ is $f_5=2^{2^4}$ which means the maximum $n$ is $n=5$.\\
-c)For unsigned long int, the maximum value it can store is $4294967295=2^32-1<2^{2^5}$, so the maximum value for $f_n$ is the same as the condition in long int and the maximum $n$ is $n=5$.
-
+\noindent Since $f_0=2, f_n=f_{n-1}^2$, we have $f_1=4, f_2=16, \cdots, f_n=2^{2^n}$. Then we can calculate the maximum value for different data types.\\
+a)For int, the maximum value it can store is $32767=2^15-1<2^{2^4}$, so the maximum value for $f_n$ is $f_4=2^{2^3}$ which means the maximum $n$ is $n=3$.\\
+b)For long int, the maximum value it can store is $2147483647=2^31-1<2^{2^5}$, so the maximum value for $f_n$ is $f_5=2^{2^4}$ which means the maximum $n$ is $n=4$.\\
+c)For unsigned long int, the maximum value it can store is $4294967295=2^32-1<2^{2^5}$, so the maximum value for $f_n$ is the same as the condition in long int and the maximum $n$ is $n=4$.
 \end{document}
