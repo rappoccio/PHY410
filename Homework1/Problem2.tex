@@ -1,0 +1,65 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage[utf8]{inputenc}
+\begin{document}
+Herbert Ludowieg\\
+PHY 410
+\section{Problem 2}
+\begin{enumerate}[label=(\alph*)]
+\item 1010
+\item Max even numbers gotten by binary representation 256 and 512 with 9 and 10 bits respectively.\\
+    Therefore the value for 436 is between 1 0000 0000 and 10 0000 0000. Must be 9 bits long.\\
+    \begin{equation*}
+    \begin{aligned}[c]
+    2^8 &= 256 \\
+    2^7 &= 128 \\
+    \end{aligned}
+    \qquad
+    \begin{aligned}[c]
+    2^6 &= 64  \\
+    2^5 &= 32  \\
+    \end{aligned}
+    \qquad
+    \begin{aligned}[c]
+    2^4 &= 16  \\
+    2^3 &= 8   \\
+    \end{aligned}
+    \qquad
+    \begin{aligned}[c]
+    2^2 &= 4   \\
+    2^1 &= 2   \\
+    \end{aligned}
+    \end{equation*}
+    \begin{equation*}
+    1*2^8+1*2^7+0*2^6+1*2^5+1*2^4+0*2^3+1*2^2+0*2^1 = 436
+    \end{equation*}
+    Then the bit representation is 1 1011 0100
+\item 1024 can be represented as a power of two to be exact it is 2 to the 10.\\
+    So the bit representation is 100 0000 0000.
+\item
+    \begin{equation*}
+    -13_{10} = -1101_{2}
+    \end{equation*}
+    Flip the bits,\\
+    \begin{equation*}
+    0010_{2}
+    \end{equation*}
+    Add one to the bit reqresentation,\\
+    \begin{equation*}
+    0011_{2}
+    \end{equation*}
+\item
+    \begin{align*}
+    -1023_{10} &= -11 1111 1111_{2}\\
+               &= 00 0000 0000_{2} \\
+               &= 00 0000 0001_{2} \\
+    \end{align*}
+\item
+    \begin{align*}
+    -1024_{10} &= -100 0000 0000_{2}\\
+               &= 011 1111 1111_{2} \\
+               &= 100 0000 0000_{2} \\
+    \end{align*}
+\end{enumerate}
+\end{document}
