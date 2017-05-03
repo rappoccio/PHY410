@@ -90,11 +90,11 @@ for iStep in xrange(maxStep) :
         r[1] += tau*0.5*(v[1] + vy_last)
 
 
-        #* If ball reaches ground (y<0), break out of the loop
-        if r[1] < 0 :
-            xplot.append( r[0] )  # Record last values computed
-            yplot.append( r[1] )
-            break                  # Break out of the for loop
+    #* If ball reaches ground (y<0), break out of the loop
+    if r[1] < 0 :
+        xplot.append( r[0] )  # Record last values computed
+        yplot.append( r[1] )
+        break                  # Break out of the for loop
 
 
 
