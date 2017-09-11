@@ -41,7 +41,7 @@ class Poisson :
                 VNew[i][j] =  V[i][j]
 
         # perform Gauss-Seidel update
-        for i in range(1, self.L):
+        for i in range(1, self.L+1):
             for j in range(1, self.L+1):
                 VNew[i][j] = 0.25 * (VNew[i-1][j] + VNew[i+1][j] +
                                      VNew[i][j-1] + VNew[i][j+1] +
