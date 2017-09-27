@@ -13,9 +13,9 @@ class Advection :
     def __init__(self, method="FTCS()", N=500, L=5.0, c=1.0, step_wave=False ):
 
 
-        self.L = L                  # system size
+        self.L = float(L)           # system size
         self.N = 500                # number of cells in x
-        self.dx = L / float(N)      # grid spacing
+        self.dx = float(L) / float(N)  # grid spacing
         self.c = 1.0                # wave speed
         self.t = 0.0                # time
         self.dt = self.dx / self.c  # time step

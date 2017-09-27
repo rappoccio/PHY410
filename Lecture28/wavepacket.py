@@ -24,10 +24,10 @@ class Wavepacket :
         self.periodic = periodic     # True = periodic, False = Dirichlet boundary conditions
 
         # The potential V(x)
-        self.V_0 = 0.5               # height of potential barrier
+        self.V_0 = -0.5               # height of potential barrier
         self.V_width = 10.0          # width of potential barrier
         self.V_center = 0.75 * L     # center of potential barrier
-        self.gaussian = False        # True = Gaussian potential, False = step potential
+        self.gaussian = True         # True = Gaussian potential, False = step potential
 
 
         # Initial wave packet
@@ -80,7 +80,7 @@ class Wavepacket :
     def V(self, x):
         half_width = abs(0.5 * self.V_width)
         if self.gaussian:
-            return self.V_0 * math.exp(-(x - self.V_center)**2 / (2 * self.half_width**2))
+            return self.V_0 * math.exp(-(x - self.V_center)**2 / (2 * half_width**2))
         else:
             if abs(x - self.V_center) <= half_width:
                 return self.V_0

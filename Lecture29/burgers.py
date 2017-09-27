@@ -147,7 +147,7 @@ class Animator :
             start_time = time.clock()
             self.burgers.time_step()
             end_time = time.clock()
-            print 'Tridiagnonal step in ' + str(end_time - start_time) 
+            #print 'Tridiagnonal step in ' + str(end_time - start_time) 
             yield [ix for ix in self.burgers.u]
 
     def create_widgets(self):
