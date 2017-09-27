@@ -27,7 +27,7 @@ class Wavepacket :
         self.V_0 = -0.5               # height of potential barrier
         self.V_width = 10.0          # width of potential barrier
         self.V_center = 0.75 * L     # center of potential barrier
-        self.gaussian = True         # True = Gaussian potential, False = step potential
+        self.gaussian = False        # True = Gaussian potential, False = step potential
 
 
         # Initial wave packet
