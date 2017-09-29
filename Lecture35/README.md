@@ -37,7 +37,7 @@ python generate_random_start.py > random.in
 
 ### Run random
 ```
-./nbody_sh1 < random.in > random.out
+./nbody_sh1 -o 0.01 < random.in > random.out
 ```
 
 ## Animate 
