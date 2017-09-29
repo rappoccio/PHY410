@@ -1,6 +1,8 @@
 # Using N-body starter code by Hut and Makino for N-body simulation
 
-Full details are [here](https://www.ids.ias.edu/~piet/act/comp/algorithms/starter). 
+Full details are [here](https://www.ids.ias.edu/~piet/act/comp/algorithms/starter).
+
+## Download, compile, execute figure 8
 
 ### Get the code:
 
@@ -28,8 +30,11 @@ g++ nbody_sh1.C -o nbody_sh1
 ./nbody_sh1 -o 0.01 < figure8.in > figure8.out
 ```
 
+## Generate random:
 
-### Animate:
+### 
+
+## Animate:
 ```
 python nbody_animate.py
 ```
