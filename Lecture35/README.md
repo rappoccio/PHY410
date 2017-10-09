@@ -25,16 +25,29 @@ tar -zxvf nbody_sh1.tar.gz
 g++ nbody_sh1.C -o nbody_sh1
 ```
 
-### Execute:
+### Execute a Figure-8:
 ```
 ./nbody_sh1 -o 0.01 < figure8.in > figure8.out
 ```
 
-## Generate random:
+## Generate a random setup:
+```
+python generate_random_start.py > random.in
+```
 
-### 
+### Run random
+```
+./nbody_sh1 -o 0.01 < random.in > random.out
+```
 
-## Animate:
+## Animate 
+
+### Animate the Figure-8
 ```
 python nbody_animate.py
+```
+
+### Animate the random config:
+```
+python nbody_animate.py random.out
 ```
