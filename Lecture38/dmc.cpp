@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <vector>
 using namespace std;
 
 #include "random.hpp"
@@ -15,10 +16,9 @@ public:
   DiffusionMC(int nt, double idt) :
     N_T(nt), dt(idt)
   {
-    
     N = N_T;                   // set N to target number specified by user
-    for (int n = 0; n < N; n++) {
-      ensureCapacity(n);
+    ensureCapacity(N);    
+    for (int n = 0; n < N; n++) {      
       for (int d = 0; d < DIM; d++)
 	r[n][d] = rng.rand()- 0.5;
       alive[n] = true;
@@ -31,7 +31,7 @@ public:
 
 
 
-  double V(double *r) {          // harmonic oscillator in DIM dimensions
+  double V( std::vector<double> const & r) {          // harmonic oscillator in DIM dimensions
     double rSqd = 0;
     for (int d = 0; d < DIM; d++)
       rSqd += r[d] * r[d];
@@ -40,36 +40,15 @@ public:
 
   void ensureCapacity(int index) {
 
-    static int maxN = 0;       // remember the size of the array
-
-    if (index < maxN)          // no need to expand array
+    if (index < r.size())          // no need to expand array
       return;                // do nothing
-
-    int oldMaxN = maxN;        // remember the old capacity
-    if (maxN > 0)
-      maxN *= 2;             // double capacity
-    else
-      maxN = 1;
-    if (index > maxN - 1)      // if this is not sufficient
-      maxN = index + 1;      // increase it so it is sufficient
-
-    // allocate new storage
-    double **rNew = new double* [maxN];
-    bool *newAlive = new bool [maxN];
-    for (int n = 0; n < maxN; n++) {
-      rNew[n] = new double [DIM];
-      if (n < oldMaxN) {     // copy old values into new arrays
-	for (int d = 0; d < DIM; d++)
-	  rNew[n][d] = r[n][d];
-	newAlive[n] = alive[n];
-	delete [] r[n];    // release old memory
-      }
+    else {
+      r.resize( 2 * index, std::vector<double> (DIM) );      
+      alive.resize( 2 * index, false );      
+      return;
     }
-    delete [] r;               // release old memory
-    r = rNew;                  // point r to the new memory
-    delete [] alive;
-    alive = newAlive;
   }
+  
   void zeroAccumulators() {
     ESum = ESqdSum = 0;
     for (int i = 0; i < NPSI; i++)
@@ -168,8 +147,8 @@ protected:
   // random walkers
   int N;                         // current number of walkers
   int N_T;                       // desired target number of walkers
-  double **r;                    // x,y,z positions of walkers
-  bool *alive;                   // is this walker alive?
+  std::vector< std::vector<double> > r; // x,y,z positions of walkers
+  std::vector<bool> alive;       // is this walker alive?
 
   double dt;                     // Delta_t set by user
   double E_T;                    // target energy
