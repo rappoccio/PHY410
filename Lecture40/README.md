@@ -22,7 +22,17 @@ Compile the MSTW c++ file:
 g++ -c -Wall -W mstwpdf.cc -o mstwpdf_cpp.o
 ```
 
+
+## Instructions for our code
+
 Now compile our test example:
 ```
-g++ mstw.cpp mstwpdf_cpp.o -o mstw
+g++ -std=c++11 mstw.cpp mstwpdf_cpp.o -o mstw
 ```
+
+And finally run:
+```
+./mstw
+```
+
+
