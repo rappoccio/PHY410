@@ -36,3 +36,15 @@ And finally run:
 ```
 
 
+## Make a few plots
+
+Plot of ee->Z->ee versus cos(theta):
+
+```
+python plot_stuff.py  ee_Z_ee_dsigma_domega.txt 
+```
+
+Plot of the proton PDFs
+```
+python plot_pdfs.py proton_pdfs.txt
+```
