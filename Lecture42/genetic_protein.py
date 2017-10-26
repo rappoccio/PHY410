@@ -157,7 +157,7 @@ print(" ------------------------------------------------------")
 dna = "BWBWWBBWBWWBWBBWWBWB"
 p20 = new_extended_coil(dna)
 L = len(p20)
-mmc_steps = 50000
+mmc_steps = 300 * 200
 
 # First try simulated annealing
 print '--------------------'
@@ -176,10 +176,10 @@ print '--------------------'
 dna = "BWBWWBBWBWWBWBBWWBWB"
 p20 = new_extended_coil(dna)
 L = len(p20)
-mmc_steps = 5000
+mmc_steps = 300
 
 # Now run the GA
-nmutants = 20
+nmutants = 200
 E_min, step_min, valid_confs = simulated_ga_run(p20, dna, mmc_steps, nmutants)
 print(" E_min =", E_min, "at step", step_min,
     "fraction of valid configurations =", valid_confs)
