@@ -3,6 +3,7 @@ import math
 import random
 import matplotlib
 import matplotlib.pyplot as plt
+from operator import itemgetter
 
 def new_extended_coil(dna):
     """ input:  dna sequence of 'B' (hydrophopic) and 'W' (hydrophilic) residues
@@ -26,6 +27,13 @@ def E(s, dna):
                 if abs(dx) + abs(dy) == 1:
                     n_BB += 1
     return -n_BB
+
+def selfAvoiding(s, s_trial, i):
+    for j in range(i):
+        for k in range(i + 1, len(s)):
+            if s_trial[j] == s[k]:
+                return False
+    return True
 
 def MMC_mutation_step(s, dna, c_k):
     """ input:  conformation, temperature
@@ -57,10 +65,9 @@ def MMC_mutation_step(s, dna, c_k):
             for l in range(2):
                 s_trial[j][k] += rot_mat[k][l] * dr[l]
     # check whether this is a valid self-avoiding conformation
-    for j in range(i):
-        for k in range(i + 1, len(s)):
-            if s_trial[j] == s[k]:
-                return False
+    avoid = selfAvoiding( s, s_trial, i)
+    if not avoid :
+        return False
     # no overlaps - update conformation using Metropolis et al. algorithm
     dE = E(s_trial, dna) - E(s, dna)
     w = math.exp(- dE / c_k)
@@ -120,26 +127,27 @@ def simulated_ga_run(s, dna, mmc_steps, nmutants):
                 valid_confs += 1
                 E_step = E(mutant, dna)
                 if E_step < E_min:
-                    passed.append(mutant)
+                    passed.append( [mutant, E_step] )
                     E_min = E_step
                     step_min = step
                     print(" E =", E_min, "at step", step)
 
-        # Randomly select two children (require at least two children with energy less than their parents)
+
+        # Sort by energy
+        passed = sorted(passed, key=itemgetter(1))
+        # Select two lowest energy children (require at least two children with energy less than their parents)
         if len(passed) < 2 :
             continue
-        ipassed0 = random.randrange(0,len(passed))
-        ipassed1 = random.randrange(0,len(passed))
-        while ipassed0 == ipassed1 :
-            ipassed1 = random.randrange(0,len(passed))
-        passed0 = passed[ipassed0]
-        passed1 = passed[ipassed1]
+        passed0 = passed[0][0]
+        passed1 = passed[1][0]
         # Now "mate" the two to evolve. 
         index = random.randrange(0,len(passed0))
         child = passed0[0:index] + passed1[index:]
-
-        # Reset the mutants to nmutant copies of the successful offspring
-        mutants = [ copy.copy(child) ] * nmutants
+        if selfAvoiding(s, child, index ) : 
+            # Reset the mutants to nmutant copies of the successful offspring
+            mutants = [ copy.copy(child) ] * nmutants
+        else :
+            continue
         
         if step % 200000 == 0 and c_k > 0.15:
             c_k *= alpha
