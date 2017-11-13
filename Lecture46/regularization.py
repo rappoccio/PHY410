@@ -52,11 +52,15 @@ plt.xlabel('Length (cm)')
 plt.ylabel('Number')
 
 plt.figure(3)
-l = 0.1
-m = rlsq_solution_V1(G, d, l)
 meas, = plt.plot(xvals, d)
-inv, = plt.plot(xvals, m, '--')
-plt.legend( [meas,inv], ['Measured', 'True'])
+toplot = []
+regparams = [0.01, 0.05, 0.1, 0.5, 1.0]
+for l in regparams:
+    m = rlsq_solution_V1(G, d, l)    
+    inv, = plt.plot(xvals, m, '--')
+    toplot.append( inv )
+
+plt.legend( [meas] + toplot, ['Measured'] + regparams)
 plt.xlabel('Length (cm)')
 plt.ylabel('Number')
 
