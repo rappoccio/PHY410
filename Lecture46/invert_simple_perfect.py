@@ -21,7 +21,7 @@ for i,x in enumerate(xreco):
     xreco[i] = smear(x,mu,sigma)
 
 plt.figure(1)
-G, xbins2d, ybins2d, patches2d = plt.hist2d(xtrue, xreco, bins=[xbins,xbins], weights=w, cmap='Blues')
+G, xbins2d, ybins2d, patches2d = plt.hist2d(xreco, xtrue, bins=[xbins,xbins], weights=w, cmap='Blues')
 plt.xlabel('True Length (cm)')
 plt.ylabel('Reconstructed Length (cm)')
 plt.colorbar()
@@ -39,7 +39,7 @@ Ginv = np.linalg.inv( np.matrix(G) )
 m = np.matmul(Ginv, d).flatten().tolist()[0]
 meas, = plt.plot(xvals, d)
 inv, = plt.plot(xvals, m, '--')
-plt.legend( [meas,inv], ['Measured', 'True'])
+plt.legend( [meas,inv], ['Measured', 'Reconstructed'])
 plt.xlabel('Length (cm)')
 plt.ylabel('Number')
 
