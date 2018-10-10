@@ -17,7 +17,7 @@ public :
   {
   }
 
-  static const double g=9.0;          // acceleration of gravity
+  static constexpr double g=9.0;          // acceleration of gravity
 
 protected : 
   double L;                           // length in meters
