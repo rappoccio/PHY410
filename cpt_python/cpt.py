@@ -549,7 +549,7 @@ def find_maximum( a, b, f, tol ) :
     negf = lambda x : -1.0*f(x)
     xmin = scipy.optimize.minimize( fun=negf, x0=a, tol=tol )
     fxmin = negf(xmin.x)
-    return [xmin.x,fxmin]
+    return [xmin.x,-1*fxmin]
 
 
 
