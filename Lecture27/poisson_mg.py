@@ -137,11 +137,27 @@ while True:
         break
 
 print " CPU time =", time.clock() - start_time, "sec"
-file = open("poisson_mg.data", "w")
-for i in range(0, L+2):
-    x = i * poissonmg.h
-    for j in range(0, L+2):
-        y = j * poissonmg.h
-        file.write(repr(x) + "\t" + repr(y) + "\t" + repr(poissonmg.psi[i][j]) + "\n")
-file.close()
-print " Potential in file poisson_mg.data"
+
+
+# Convert x, y, V(x,y) to a surface plot
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
+from matplotlib.mlab import griddata
+import matplotlib.pyplot as plt
+import numpy as np
+# Define the axes
+x = np.arange(0, poissonmg.h*(poissonmg.L+2), poissonmg.h)
+y = np.arange(0, poissonmg.h*(poissonmg.L+2), poissonmg.h)
+# Get the grid
+X, Y = np.meshgrid(x, y)
+# Set Z to the poissonmg V[i][j]
+Z = np.array( poissonmg.psi )
+
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+scat = ax.plot_surface( X, Y, Z, rstride=1, cstride=1, cmap=cm.coolwarm,
+                        linewidth=0, antialiased=False )
+
+plt.show()
+
