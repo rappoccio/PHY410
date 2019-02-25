@@ -39,6 +39,35 @@ There are also hooks to use gnuplot. Both are often commented
 out. To get started with these, try these links : 
 
 
+Docker:
+======================
+
+* Install Docker:  https://docs.docker.com/install/ (execute once)
+* Open your Terminal application.
+* Find a preferred directory somewhere and make a "results" folder:
+```
+mkdir results
+```
+* Get the code for PHY410:
+```
+git clone https://github.com/rappoccio/PHY410.git
+cd PHY410
+```
+* Execute docker image (execute every time you log in):
+   * With jupyter:
+```
+./runDocker.sh srappoccio/phy410:latest
+```
+   *  With terminal:
+```
+./runDocker.sh srappoccio/phy410:latest 1
+```
+* Your homework should go into the "results" directory you already
+created or it will be overwritten when the Docker image quits.
+I have disabled write access to that directory, but it isn't 100%
+foolproof so you will be able to shoot themselves in the foot unless
+you follow directions. 
+
 
 
 scipy and matplotlib : 
@@ -72,7 +101,7 @@ Ubuntu :
 
 sudo apt-get install python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
 
-Make sure it installse version 0.13.0. If it doesn't, use the tarball : 
+Make sure it installs version 0.13.0. If it doesn't, use the tarball : 
 
 * With tarball : 
  
