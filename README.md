@@ -54,14 +54,8 @@ git clone https://github.com/rappoccio/PHY410.git
 cd PHY410
 ```
 * Execute docker image (execute every time you log in):
-   * With jupyter:
-```
-./runDocker.sh srappoccio/phy410:latest
-```
-   *  With terminal:
-```
-./runDocker.sh srappoccio/phy410:latest 1
-```
+   * With jupyter:```./runDocker.sh srappoccio/phy410:latest```
+   * With terminal:```./runDocker.sh srappoccio/phy410:latest 1```
 * Your homework should go into the "results" directory you already
 created or it will be overwritten when the Docker image quits.
 I have disabled write access to that directory, but it isn't 100%
