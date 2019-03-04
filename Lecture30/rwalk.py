@@ -55,6 +55,6 @@ for step in range(n_steps):
 file.close()
 print " t, <x^2>, sigma in file rwalk.data"
 
-plt.scatter( [i for i in range(len(steps))], steps )
+plt.scatter( steps, x2ave )
 
 plt.show()
