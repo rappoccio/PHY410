@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from read_tuple import *
 import matplotlib.pyplot as plt
 import sys
 import numpy
