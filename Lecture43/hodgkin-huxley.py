@@ -81,7 +81,7 @@ while t < t_max + dt:
         print(" ", t, Vnmht[0], Vnmht[1], Vnmht[2], Vnmht[3])
     data = str(t)
     for i in range(4):
-        data += '\t' + str(Vnmht[i])
+        data += '   ' + str(Vnmht[i])
     file.write(data + '\n')
     dt = RK4_adaptive_step(Vnmht, dt, HH_equations)
     dt_min = min(dt_min, dt)
