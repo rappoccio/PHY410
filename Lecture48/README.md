@@ -22,14 +22,13 @@ g++ -std=c++11 vectorization.cpp -o vectorization -O2
 
 The performances achieved are:
 
-|-|-|-|-|-|-|
-||C++ -O0| C++ -O1| C++ -O2 | C++ -O3 | python | numpy |
-|-|-|-|-|-|-|
-vector, unknown size        | 825 | 585 | 150 | 31862 | 460 |
-vector, known size          | 736 | 564 | 93  |       |     |
-static array                | 576 | 564 | 525 |       |     |
-static array, manual unroll | 132 | 97  | 93  |       |     |
-|-|-|-|-|-|-|
+```
+|                            |C++ -O0| C++ -O1| C++ -O2 | python | numpy |
+|vector, unknown size        | 825   | 585    | 150     | 31862  | 460   |
+|vector, known size          | 736   | 564    | 93      |        |       |
+|static array                | 576   | 564    | 525     |        |       |
+|static array, manual unroll | 132   | 97     | 93      |        |       |
+```
 
 Note: These used:
    - 2.9 GHz Intel Core i7
