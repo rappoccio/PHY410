@@ -23,6 +23,7 @@ g++ -std=c++11 vectorization.cpp -o vectorization -O2
 The performances achieved are:
 
 ```
+All times in microseconds
 |                            |C++ -O0| C++ -O1| C++ -O2 | python | numpy |
 |vector, unknown size        | 825   | 585    | 150     | 31862  | 460   |
 |vector, known size          | 736   | 564    | 93      |        |       |
